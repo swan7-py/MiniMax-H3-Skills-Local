@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Collage Explainer Generator (Local)"
+  short_description: "Local, step-confirmed paper-collage explainer animation pipeline"
+  default_prompt: "Use $paper-collage-explainer-generator-local to plan a paper-collage explainer and output pure H3 video prompts."

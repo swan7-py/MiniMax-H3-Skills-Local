@@ -1,0 +1,4 @@
+interface:
+  display_name: "Papercraft Stop-Motion Explainer (Local)"
+  short_description: "Local, step-confirmed papercraft stop-motion explainer pipeline"
+  default_prompt: "Use $papercraft-stop-motion-explainer-local to plan a papercraft explainer and output pure H3 video prompts."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Co-op Game Intro Generator (Local)"
+  short_description: "Local, step-confirmed two-player co-op game menu/intro animation pipeline"
+  default_prompt: "Use $co-op-game-intro-generator-local to plan a co-op game intro and output pure H3 video prompts."

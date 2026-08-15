@@ -1,0 +1,4 @@
+interface:
+  display_name: "Music Video Subtitle Generator (Local)"
+  short_description: "Local, step-confirmed lyric-typeset / beat-synced MV pipeline"
+  default_prompt: "Use $music-video-subtitle-generator-local to plan a lyric MV and output pure H3 video prompts."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "3D Animation Short Generator (Local)"
+  short_description: "Local, step-confirmed 3D animated short pipeline: brief to outline to character/scene cards to shot list to storyboard to pure H3 video prompts"
+  default_prompt: "Use $3d-animation-short-generator-local to plan a 3D animated short and output pure H3 video prompts."

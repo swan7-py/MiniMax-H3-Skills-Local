@@ -1,0 +1,4 @@
+interface:
+  display_name: "ACE-Step 1.5 Prompt Writer"
+  short_description: "ACE-Step 1.5 local music model prompt: Caption + Lyrics + Metadata"
+  default_prompt: "Use $ace-step-1.5-prompt-writer to write an ACE-Step 1.5 music/BGM prompt."

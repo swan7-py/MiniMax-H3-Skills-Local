@@ -1,0 +1,4 @@
+interface:
+  display_name: "Handdrawn Live Video Generator (Local)"
+  short_description: "Local, step-confirmed hand-drawn glow + live-action fusion short pipeline"
+  default_prompt: "Use $handdrawn-live-video-generator-local to plan a handdrawn-live fusion video and output pure H3 video prompts."

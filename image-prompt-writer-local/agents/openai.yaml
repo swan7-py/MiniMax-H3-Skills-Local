@@ -1,0 +1,4 @@
+interface:
+  display_name: "Image Prompt Writer (Local)"
+  short_description: "Rich structured text-to-image prompts: style anchor + per-image four-section detail, Chinese + English dual version"
+  default_prompt: "Use $image-prompt-writer-local to turn a brief into a rich text-to-image prompt."

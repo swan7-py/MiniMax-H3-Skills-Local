@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brand Promo Video Generator (Local)"
+  short_description: "Local, step-confirmed brand/product/website promo video pipeline producing pure prompt text"
+  default_prompt: "Use $brand-promo-video-generator-local to plan a brand promo video and output pure H3 video prompts."
