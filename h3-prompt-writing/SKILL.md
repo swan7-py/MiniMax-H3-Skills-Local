@@ -43,3 +43,25 @@ When the input includes dialogue/voice audio (`<Audio N>`), **transcribe the aud
 - Write rewrite sections in English; preserve dialogue, lyrics, and visible scene text in their original language.
 - Describe each shot by composition, subjects, environment, actions, camera, sound, and the exact point where referenced content appears.
 - Avoid plot summaries, unresolved reference labels, and timing that does not match the requested duration.
+
+## Special Tokens (MiniMax Extra Tokens)
+
+The released MiniMax-H3 tokenizer (Qwen-based) reserves these fixed special tokens. Their IDs are frozen by the shipped tokenizer — never renumber, paraphrase, or spell them differently. Use them verbatim when wrapping dialogue, lyrics, captions, or marking a cutoff.
+
+| Token | ID | Purpose |
+|-------|-----|---------|
+| `<d>` / `</d>` | 151669 / 151670 | Dialogue delimiters. Wrap spoken lines as `<d>[Language] ... </d>` (iron rule — see Output Rules). |
+| `<|lyrics_start|>` / `<|lyrics_end|>` | 151672 / 151673 | Lyrics delimiters. Wrap sung lyrics (sung vocal segments) the same way as dialogue. |
+| `<|caption_start|>` / `<|caption_end|>` | 151674 / 151675 | Caption delimiters. Wrap on-screen caption / typography / subtitle overlay text. |
+| `<|cutoff|>` | 151671 | Cutoff marker. Marks a hard segment boundary / end-of-segment in the generated sequence. |
+
+Rules:
+- Inside dialogue/lyrics/caption markers, put only the verbatim original content (with the `[Language]` tag for `<d>` and lyrics). Do not translate, rewrite, or append a translation.
+- Speaker identity, action, and delivery go OUTSIDE the markers.
+- These markers are consumed by the tokenizer as literal tokens; a wrong spelling (e.g. `<lyrics_start>` without the `|`) breaks parsing.
+
+## Tips for Better Results
+- Always match the total duration of the description to the requested video length (4–15 seconds).
+- Keep reference labels consistent (e.g. `<Picture 1>`, `<Video 1>`, `<Audio 1>`) across every section.
+- Prefer concrete visual and audio details over abstract words like "cinematic" or "beautiful".
+- When using keyframes (I2VA / FL2VA / L2VA), clearly state how the first and/or last frame connects to the timeline.
