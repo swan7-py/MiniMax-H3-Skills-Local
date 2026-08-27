@@ -1,0 +1,4 @@
+interface:
+  display_name: "MiniMax H3 提示词撰写（中文版）"
+  short_description: "编写 H3 基础与全参考视频提示词"
+  default_prompt: "使用 $h3-prompt-writing-cn 将此多模态需求改写为 MiniMax H3 生成提示词。"
