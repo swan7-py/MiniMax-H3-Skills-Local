@@ -1,23 +1,53 @@
 ---
 name: ace-step-1.5-prompt-writer
-description: Turn a brief music description and optional tagged lyrics into an ACE-Step 1.5 generation prompt for the local open-source music model. Produces a rich Caption (style/genre/mood/instrument/timbre/vocal), structured Lyrics (with [Intro]/[Verse]/[Chorus] markers or [Instrumental]), and a Metadata block (bpm/keyscale/timesignature/vocal_language/duration/instrumental). Use when the 8 本地版 video skills need a BGM or song prompt, or any time the user wants an ACE-Step 1.5 text prompt. No API calls — pure prompt writing.
+description: 通过互动式问答了解用户想要的音乐（用途/情绪/风格/乐器/人声/歌词/元数据），最终生成 ACE-Step 1.5（本地开源音乐模型）的生成提示词：Caption + Lyrics + Metadata 三段式。纯提示词，不调用任何生成接口。供 8 个本地版视频 skill 产出 BGM，或用户直接要 ACE-Step 1.5 提示词时使用。
 ---
 
-# ACE-Step 1.5 提示词书写 skill（本地版 · 纯提示词）
+# ACE-Step 1.5 提示词书写 skill（本地版 · 互动式 · 纯提示词）
 
-把一段简短的音乐描述（+ 可选带结构标记的歌词）改写成 **ACE-Step 1.5**（本地开源音乐基础模型，Gradio UI / REST API / ComfyUI 节点均可消费）的生成提示词。本 skill **只产出文本提示词，不调用任何生成接口**，由用户在本地 ACE-Step 1.5 中自行执行。
+把用户的音乐想法，通过**多轮互动问答**逐步澄清，最终改写为 ACE-Step 1.5 的生成提示词（Caption + Lyrics + Metadata 三段）。本 skill **只产出文本提示词，不调用任何生成接口**，由用户在本地 ACE-Step 1.5（Gradio UI / REST API / ComfyUI 节点）中自行执行。
 
 ## 何时调用
+- 用户说「写一段 ACE-Step 1.5 的 BGM / 写首歌的提示词 / 帮我想个配乐 / 配个背景音乐」。
 - 8 个视频本地版 skill 在「音频模式门 = 分离生成」时，需要单独产出 BGM / 整曲提示词。
-- 用户直接说「写一段 ACE-Step 1.5 的 BGM / 写首歌的提示词」。
-- 任何需要 ACE-Step 1.5 `caption` / `lyrics` / 元数据 文本的场景。
+- 任何需要 ACE-Step 1.5 `caption` / `lyrics` / 元数据文本的场景。
 
-## 你需要向用户收集的信息
-1. **音乐用途与基调**：BGM（背景、循环友好）还是整曲（有人声）？情绪/氛围（如 科技感、温暖、紧张、欢快）？
-2. **风格与乐器**：流派（pop/rock/jazz/electronic/lo-fi/synthwave…）、主要乐器、音色质感。
-3. **是否有人声**：无人声→纯音乐（lyrics 写 `[Instrumental]`）；有人声→要语种 + 是否给歌词。
-4. **歌词（可选）**：用户给的歌词文本，或你代写（按下方 Lyrics 指南，带结构标记）。
-5. **元数据偏好（可选）**：目标时长（秒）、BPM、调性、拍号、语种。不给定则标注「交给 thinking 模式自动推断」。
+## 核心互动流程（逐步确认，别一次问完所有问题）
+遵循「**先大类后细节、能选就给选项**」的原则。用 AskUserQuestion 一次性抛 2–3 个相关问题（每个选项 3–4 个 + 用户可填「其他」），解释文字要短。每轮确认后再进下一轮。最少两轮即可出结果，信息越足越精准。
+
+> 用户若一开始就给了一段完整描述，可跳过提问直接进「收敛｜生成输出」；若描述含糊，仍按流程补问缺口。
+
+### 第一轮｜用途 + 情绪 + 流派（必问）
+用 AskUserQuestion 同时问这三件：
+1. **用途**（决定人声与否与结构）：
+   - `BGM 纯音乐`（循环友好、无人声、用 `[Instrumental]`）
+   - `带人声整曲`（有主歌副歌、有演唱）
+   - `你来推荐`（按后续情绪/场景判断，默认先给 BGM 方案）
+2. **情绪/氛围**（给常见预设，用户可多选或填其他）：
+   - 科技感/未来感、温暖/治愈、紧张/悬疑、欢快/活力、梦幻/空灵、沉重/悲伤、史诗/宏大、复古/怀旧
+3. **流派**（可选「让模型自由发挥」）：
+   - pop、rock、electronic/EDM、lo-fi、synthwave、jazz、classical、hip-hop/R&B、folk、cinematic、民乐
+
+### 第二轮｜乐器 / 音色 + 参考（按需）
+- **主要乐器**：piano / acoustic guitar / synth pads / strings / 808 drums / electric bass / brass / 古筝·二胡等民乐 / choir
+- **音色质感**：warm / bright / crisp / airy / punchy / lush / raw / polished
+- **时代/参考**（可选）：80s synth-pop / 90s grunge / 2010s EDM / vintage soul / modern trap / 某位艺术家（用 `reminiscent of ...` 或 `in the style of ...`）
+- ⚠️ 若用户给了参考艺术家/歌曲，**优先用 `in the style of / reminiscent of` 写进 Caption**，比堆形容词更高效、更稳定。
+
+### 第三轮｜人声与歌词
+- **无人声（BGM）**：Lyrics 直接写 `[Instrumental]`，Metadata `instrumental: true`。
+- **有人声**：
+  - 语种：中文 / 英文 / 日文 / 其他（影响 `vocal_language`）
+  - 人声特点：female/male vocal、breathy / powerful / falsetto / raspy / choir
+  - 歌词来源：
+    ① 用户提供文本 → 你帮忙切分并加 `[Intro]/[Verse]/[Chorus]` 等结构标记；
+    ② 你代写 → 按下方 Lyrics 指南创作（带结构标记、每行 6–10 音节、坚持一个核心隐喻）。
+
+### 第四轮｜元数据（可选，最简可全交自动）
+确认目标时长、BPM、调性、拍号。**用户不给则标注「自动推断」**，让 thinking 模式（`use_cot_metas=true`）自行推断——日常不必手写。
+
+### 收敛｜生成输出
+汇总为下方「输出契约」三段式，直接交用户粘贴进 ACE-Step 1.5。若用户只给了模糊方向，先给一版再邀迭代（结尾提示「不确定可改：…」）。
 
 ## Caption 写作指南（最重要输入，≤512 字符）
 Caption 决定生成音乐的「整体画像」，支持三种形式：简单风格词、逗号分隔 tags、复杂自然语言——**形式不影响效果，关键是维度齐全**。
@@ -61,6 +91,8 @@ Lyrics 控制音乐随时间展开。结构标记可用 `-` 组合（如 `[Choru
 - 括号 = 背景人声（`We rise together (together)`）。
 - 重复元音延音（`Feeeling so aliiive`，谨慎用）。
 - 段落间空行分隔。
+- 人声控制可叠加：`[raspy vocal]` `[whispered]` `[falsetto]` `[powerful belting]` `[spoken word]` `[harmonies]` `[ad-lib]`
+- 能量/情绪可叠加：`[high energy]` `[building energy]` `[explosive]` `[melancholic]` `[euphoric]` `[dreamy]`
 
 **避免「AI 味」歌词**：形容词堆砌、押韵混乱、段落边界模糊、没有呼吸感（每行太长）、隐喻混用（一首歌坚持一个核心隐喻）。
 
@@ -175,4 +207,15 @@ lo-fi, dreamy, nostalgic, warm vinyl crackle, soft electric piano, breathy male 
 - vocal_language: zh
 - duration: 40
 - instrumental: false
+```
+
+## 互动对话示例（供 agent 参考语气）
+```
+Agent: 想做哪种音乐？（用 AskUserQuestion 抛：用途 / 情绪 / 流派）
+User:  要个 BGM，科技感，electronic
+Agent: 乐器倾向？（synth pads / piano / 弦乐…）有参考艺术家吗？
+User:  synth pads + 808 鼓，类似 80s synthwave
+Agent: 时长要多长？BPM 有要求吗？
+User:  30 秒循环，其他你定
+Agent: （输出示例 1 风格的三段式，结尾提示「想改情绪/加人声可说」）
 ```
