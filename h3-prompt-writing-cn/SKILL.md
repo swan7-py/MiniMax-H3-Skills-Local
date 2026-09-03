@@ -1,19 +1,20 @@
 ---
 name: h3-prompt-writing-cn
-description: 为 T2VA / I2VA / FL2VA / L2VA / Ref2VA 编写 MiniMax H3 视频生成提示词（中文说明版）。当需要将多模态需求改写为 H3 提示词结构、撰写 integrated_multimodal_description / overall_soundscape / non_diegetic_music、对齐关键帧、或为图像 / 视频 / 音频定义参考标签时使用。提示词本身的标签、占位符与字段名保持英文，不翻译为中文。
+description: 为 T2VA / I2VA / FL2VA / L2VA / Ref2VA 编写 MiniMax H3 视频生成提示词（中文产出版）。当需要将多模态需求改写为 H3 提示词结构、撰写 integrated_multimodal_description / overall_soundscape / non_diegetic_music、对齐关键帧、或为图像 / 视频 / 音频定义参考标签时使用。提示词内容（描述、动作、场景、光影、声音）用中文产出；标签、占位符、字段名、模式名、镜头词汇、关系标记保持英文，不翻译为中文。
 compatibility: 可移植到任何能读取本地文件的智能体——无需外部 API 调用、MiniMax Hub 工具或专有运行时。agents/openai.yaml 仅补充可选的 ChatGPT/Codex UI 元数据；不限制 skill 只能用于 OpenAI 智能体。
 ---
 
 # H3 提示词撰写（中文说明版）
 
-> 本 skill 与 `h3-prompt-writing` 完全等价，唯一区别是：**所有说明文字用中文，但提示词里的标签、占位符、字段名、模式名、镜头词汇、关系标记一律保持英文**。
-> 因为 H3 提示词本体不应被翻译成中文，所以本 skill 的示例与字段全部沿用英文写法，只把"怎么写"的解释换成中文。
+> 本 skill 的目标是**用中文产出 H3 提示词**：提示词里的内容（描述、动作、场景、光影、声音等）用中文书写，只有**标签、占位符、字段名、模式名、镜头词汇、关系标记**一律保持英文不翻译。说明文字与示例中的「描述内容」均为中文，示例里的字段名 / 占位符 / 标签保持英文。
+>
+> **中文产出机制（关键，等同 T8 节点「中文」模式）**：结构以**官方英文规范** `references/base-en.txt`（基础模式）/ `references/ref-en.txt`（全参考模式）为准——它们是 H3 格式的权威契约，**不翻译**。模型按英文规范的要求，用中文散文去"填空"；字段名、`[Shot N]`、`At MM:SS.mmm`、`<Picture N>/<Video N>/<Subject N>`、保留标记、标签、固定对齐句一律保持英文。即"读英文规范、写中文内容"，而非"把规范翻译成中文再写"。`base.txt` / `ref.txt` 仅为人可读的中文渲染版，结构以 `-en` 英文文件为准。
 
 ## 工作流 (Workflow)
 
 1. 识别输入模式：T2VA、I2VA、FL2VA、L2VA，还是全参考 Ref2VA。
-2. 对于基础文本 / 关键帧模式，阅读 `references/base.txt` 并遵循其最终提示词结构。
-3. 对于全参考模式，阅读 `references/ref.txt` 并遵循其六段改写格式。
+2. 对于基础文本 / 关键帧模式，阅读 `references/base-en.txt` 并遵循其最终提示词结构。
+3. 对于全参考模式，阅读 `references/ref-en.txt` 并遵循其六段改写格式。
 4. 保留所选指南中的准确字段名、段落顺序、标签与计时标注。
 
 ## 基础模式 (Base Modes)
@@ -23,13 +24,13 @@ compatibility: 可移植到任何能读取本地文件的智能体——无需�
 - FL2VA：描述首帧与末帧之间的连续路径。
 - L2VA：推断一个合理的开头，并收束到给定的末帧。
 
-按 `references/base.txt` 所示顺序使用 `integrated_multimodal_description`、`overall_soundscape`、`non_diegetic_music`。
+按 `references/base-en.txt` 所示顺序使用 `integrated_multimodal_description`、`overall_soundscape`、`non_diegetic_music`。
 
 ## 全参考模式 (Full-Reference Mode)
 
 Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysis`、`detailed_description`、`overall_soundscape`、`non_diegetic_music`。参考标签在各段之间保持一致。
 
-阅读 `references/ref.txt` 了解标签规则、保留分析与完整示例。
+阅读 `references/ref-en.txt` 了解标签规则、保留分析与完整示例。
 
 ## 音频时间线对齐（带对白音频的 Ref2VA）
 
@@ -43,7 +44,7 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 
 - **对白 / 歌词必须使用 `<d>[Language] ... </d>` 标签（铁律）**：将说话人的身份短语、ID、动作与语气放在 `<d>` 之外；`<d>` 内部只放语言标签与逐字的原始口语内容——保留每一个原词与标点，**不要翻译、改写或追加英文翻译**。示例：`<d>[Chinese] 今天的星星，好像比昨天暗了一点点。</d>`、`<d>[English] I get off at the next station.</d>`。脚本块与每个分镜描述中均须遵守。
 - **音频复用模式（fully_copy）——绝不再合成**：当 `<Audio N>` 作为最终音轨复用时，该音频是唯一的语音来源——只描述谁说话、何时说话、且口型跟随音频。不要添加语气 / 韵律 / 停顿 / 情绪指令（如"声音渐弱""学者般语调"），这些会触发再合成导致语音糊掉。
-- 改写段落用英语书写；对白、歌词与可见场景文字保留原始语言。
+- 改写段落用中文书写；对白、歌词与可见场景文字保留原始语言（歌词保留中文原文，外文对白 / 歌词保留其原文）。
 - 按构图、主体、环境、动作、镜头、声音，以及参考内容出现的精确时点来描述每个分镜。
 - 避免剧情摘要、未解析的参考标签，以及与请求时长不符的计时。
 
