@@ -33,12 +33,26 @@
 
 ### 三、H3 进阶提示词（2 个，**可选安装**，不参与上面 8 个的调用链）
 
-| Skill 文件夹 | 用途 |
-|---|---|
-| `h3-video-prompt-cn` | H3 视频提示词**专家版**（六段结构契约、参考图角色、否定式闸门、对白写法、交付模板）。与 `h3-prompt-writing` 是同一套知识的完整版／精简版关系，装了它写 H3 更细 |
-| `h3-camera-motion-lib` | ⭐ **H3 运镜提示词库**——按运镜族（摇镜变焦 / 推拉横移升降 / 环绕翻滚子弹时间 / 特殊复合 / 视角机位 / 装置风格 / 双人关系）给出**可直接粘贴的中文镜头句**＋实测状态（✅🟡❌）＋推荐 LoRA＋坑 |
+| Skill 文件夹 | 版本性质 | 用途 |
+|---|---|---|
+| `h3-video-prompt-cn` | **实践新版**（完整版 / 超集） | 在官方 H3 提示词规范之上，补入**实战判据**：镜头层纪律、参考图角色、否定式闸门、对白写法、交付模板。与仓库里的 `h3-prompt-writing` / `h3-prompt-writing-cn` 是**同一套知识的「完整版 vs 精简版」**，结构同源、不冲突 |
+| `h3-camera-motion-lib` | **实践产出**（全新） | ⭐ **H3 运镜提示词库**——按运镜族（摇镜变焦 / 推拉横移升降 / 环绕翻滚子弹时间 / 特殊复合 / 视角机位 / 装置风格 / 双人关系）给出**可直接粘贴的中文镜头句**＋实测状态（✅🟡❌）＋推荐 LoRA＋坑 |
 
-> **两者的关系**：`h3-video-prompt-cn` 管**六段结构与规范**（镜头句该放在哪一段）；
+#### 「官方原版」与「实践新版」的区别
+
+| | `h3-prompt-writing` / `h3-prompt-writing-cn`（**官方原版**） | `h3-video-prompt-cn`（**实践新版**） |
+|---|---|---|
+| 来源 | MiniMax 官方 H3 提示词指南（六段结构、标签与占位符、参考资产规则），本分享包只做"本地版 · 纯提示词 · 逐步确认"的改造封装 | 官方原版 **＋ 我们实跑之后补进去的判据** |
+| 体量 | SKILL.md 215 行 / 11 文件（精简） | SKILL.md 295 行 / 13 文件（**超集**） |
+| 多了什么 | — | 镜头层纪律、参考图两种角色、否定式两级闸门、对白 `<d>` 写法、隔空操控动词纪律、跨镜点名、大型附属物尺度、道具交接、多目标打击、交付模板等**踩坑条目** |
+| 适用 | 8 个本地版生成 skill 的调用依赖，**必须装** | 你直接写 H3 提示词时用它更细；**可选**，不装也不影响流水线 |
+
+> **一句话**：官方原版告诉你"H3 提示词长什么样"，实践新版告诉你"哪些写法在实跑里会翻车"。
+> 两份可以同时装——`h3-prompt-writing-cn` 的 SKILL.md 里已注明：**冲突时以 `h3-video-prompt-cn`（专家包版）为准**。
+
+#### 两个进阶 skill 的分工
+
+> `h3-video-prompt-cn` 管**六段结构与规范**（镜头句该放在哪一段）；
 > `h3-camera-motion-lib` 管**镜头句本体**（这句话具体怎么写）。写运镜类提示词时先查后者，再套前者的结构。
 > **不依赖 `cinematic-director-camera-dsl`**：镜头句在本库里已可直接取用，camera DSL 降级为可选校验工具；
 > 两者结论冲突时以本库的「实测」一栏为准（本库结论来自 A–G 七组 46 镜 · 约 100 条成片的对照测试）。
@@ -135,8 +149,25 @@
 
 ---
 
+## 鸣谢 / 来源（Credits）
+
+本分享包是"站在别人肩膀上 + 自己实跑"的产物，原始能力归属如下，特此鸣谢：
+
+| 来源 | 链接 | 用在本包的哪里 |
+|---|---|---|
+| **MiniMax 官方 H3 提示词指南** | https://github.com/MiniMax-AI/MiniMax-H3 | `h3-prompt-writing`、`h3-prompt-writing-cn`、`h3-video-prompt-cn` 的**六段结构与标签规范**（`subject_definitions` / `summary` / `retention_analysis` / `detailed_description` / `overall_soundscape` / `non_diegetic_music`）、`<Picture N>` 等占位符规则，均源自官方。本包只做中文产出版与本地化改造，**未改动官方规范本身** |
+| **cinematic-director-camera-dsl**（Sidekick Animation Studio Ltd.，MIT） | https://github.com/SK-SL-source/cinematic-director-camera-dsl | `h3-camera-motion-lib` 的**运镜族划分、镜头语言分层（camera core / clarifier 四层）、命令语义与部分实测证据**参考自此项目。本库已**去掉对它的运行时依赖**（不装也能直接用镜头句），但结论与证据链受益于它——特此鸣谢原作者 |
+| **loopforge0 / minimaxh3-shots-skills**（MIT） | https://github.com/loopforge0/minimaxh3-shots-skills | 约 80 次 H3 生成的公开实测发现（幅度 / 速度词效应、甩镜必须给落点、装置名会被画进画面等），经上述 DSL 引用后**间接进入**本库 |
+| **Krea2 工作流**等其余原始能力 | 各自原作者 / 官方项目 | 本分享包仅做"本地版 · 纯提示词 · 逐步确认"的改造封装 |
+
+> 我们自己贡献的部分（不属于上述来源）：A–G 七组 46 镜、约 100 条 480P 成片 + 29 条 1080P 双采成片的对照测试结论——
+> 每镜的**实测状态（✅/🟡/❌）**、推荐 LoRA 与权重、踩坑清单，以及"环境写描述式不写清单式""整圈的圈数与时长必须同时给"
+> "`<Picture N>` 不进 summary / detailed_description"等**校准后的写法纪律**。
+
+---
+
 ## 兼容性 / 免责
 
 - 全部 skill **纯文本产出、零 API 调用**，可移植到任何能读取本地 `.workbuddy/skills/` 的 WorkBuddy 环境（含 OpenAI ChatGPT/Codex 等兼容 UI，`h3-prompt-writing` 的 `agents/openai.yaml` 仅提供可选 UI 元数据，不限制运行环境）。
 - 本包**不包含**任何生图/生视频/生音乐的权重、工作流 JSON 或执行脚本；生成执行完全在你本地环境完成。
-- Krea2 工作流、`h3-prompt-writing` 等原始能力归属各自原作者 / 官方项目，本分享包仅做"本地版 · 纯提示词 · 逐步确认"的改造封装。
+- 原始能力归属见上文[「鸣谢 / 来源」](#鸣谢--来源credits)；Krea2 工作流、`h3-prompt-writing` 等归各自原作者 / 官方项目，本分享包仅做"本地版 · 纯提示词 · 逐步确认"的改造封装。
