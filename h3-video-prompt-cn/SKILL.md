@@ -73,7 +73,7 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 | `references/writing-order.md` | 每条提示词动笔第一句之前 | **书写顺序铁律：画面里"先出现的东西"写在最前面**；遮挡/揭示、跨越/甩镜/航拍、POV 三类起手写法 |
 | `references/output-template.md` | **每次交付** | 交付格式模板（参考图映射 / 生成设置 / **推荐 LoRA** / 节拍 / 六段提示词 / 提交前须知 / 待跑后核对） |
 | `references/negation-guard.md` | 交付前自检 | 否定式两级闸门（L1 词表 + 白名单）、正向化替换表、落地方式与脚本接口 |
-| `references/audio-reference.md` | **挂 `<Audio N>` 参考音频时** | **四种关系标记的实测基线**（含 `partially_copy` 区间控制失效等）、**Sx 编号须与接线顺序一致**（三线同号）、台词约束不可省、过肩镜头与正向单人约束、`<d>` 豁免白名单 |
+| `references/audio-reference.md` | **挂 `<Audio N>` 参考音频时** | **⭐ 角色形象先验 > 音色参考（`reference` 的根本机制）＋「F0 对了 ≠ 音色被复刻」的判定陷阱**；四种关系标记的实测基线（含 `partially_copy` 区间控制失效）；**Sx 编号须与接线顺序一致**（三线同号）；台词约束不可省；过肩镜头与正向单人约束；`<d>` 豁免白名单 |
 
 ## 音频时间线对齐（带对白音频的 Ref2VA）
 
