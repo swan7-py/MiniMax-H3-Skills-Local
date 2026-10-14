@@ -73,6 +73,7 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 | `references/writing-order.md` | 每条提示词动笔第一句之前 | **书写顺序铁律：画面里"先出现的东西"写在最前面**；遮挡/揭示、跨越/甩镜/航拍、POV 三类起手写法 |
 | `references/output-template.md` | **每次交付** | 交付格式模板（参考图映射 / 生成设置 / **推荐 LoRA** / 节拍 / 六段提示词 / 提交前须知 / 待跑后核对） |
 | `references/negation-guard.md` | 交付前自检 | 否定式两级闸门（L1 词表 + 白名单）、正向化替换表、落地方式与脚本接口 |
+| `references/audio-reference.md` | **挂 `<Audio N>` 参考音频时** | **四种关系标记的实测基线**（含 `partially_copy` 区间控制失效等）、**Sx 编号须与接线顺序一致**（三线同号）、台词约束不可省、过肩镜头与正向单人约束、`<d>` 豁免白名单 |
 
 ## 音频时间线对齐（带对白音频的 Ref2VA）
 
@@ -81,6 +82,8 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 - **音频优先（Audio-first）**：先用 Whisper（`faster-whisper`，模型 `small`）获取每条语料起止时间戳与说话人 ID（S1/S2）。同一说话人连续语料合并为"话轮"，话轮间隙即自然切分点，`[Shot N] At MM:SS.mmm` 锚定到话轮边界。Whisper 可能听错数字/人名；时间戳可靠，内容用用户原始文本。
 - **粗对齐，不要紧对齐**：分镜切点大致匹配说话人切换边界（±0.5–1s），不逐帧绑定。
 - **硬规则——禁止说话人错位**：核对每个 `[Shot N]` 时间区间与实际发声说话人一致。
+
+**挂 `<Audio N>` 参考音频时，另读 `references/audio-reference.md`** —— 那里有四种关系标记的实测基线、Sx 编号与接线顺序必须三线同号（`Subject N` = `S N` = `Audio N`）、台词约束不可省（简化 `<Audio N>` 定义时最易踩）、以及正向单人约束与过肩镜头两种「锁定单一说话人」的写法。
 
 ## 输出规则 (Output Rules)
 
