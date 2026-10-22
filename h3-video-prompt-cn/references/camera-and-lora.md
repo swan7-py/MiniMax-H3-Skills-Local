@@ -72,6 +72,9 @@ $PY scripts/camera_dsl.py render "<DSL命令>" --model minimax_h3 --h3-profile L
 
 ## 五、LoRA 选型
 
+> **⚠️ 本节作用域＝运镜 LoRA（camera-motion）。** 台账里的 Crash Zoom / 360-Orbit / Dutch Angle Slider / Jojocodex 都是**镜头运动**类，下面的优先级也只针对运镜。
+> **身份 / 换人一致性类 LoRA（character-swap）不在此表**，另见 `references/video-reference-modes.md` §六——那是另一条工作流（guide-latent 条件 vs 适配器），选型维度完全不同，别拿本节的"专用 ＞ 不加"去套。
+
 ### 5.1 使用优先级（用户定稿）
 
 > **专用 LoRA ＞ 不加 LoRA ＞ Jojocodex Camera-Motion（仅在特定情况）**

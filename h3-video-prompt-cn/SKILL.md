@@ -61,6 +61,22 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 
 整条「定稿卡 → 招式动画」管线（六步 + 崩坏症状速查）见 `xianxia-cinematic-video-director` 的 `references/skill-card-animation-pipeline.md`。
 
+## 视频参考（`<Video N>`）三玩法 —— 2026-10-22 实测
+
+**挂了参考视频（`<Video N>`）时，先读 `references/video-reference-modes.md`。** 三玩法的官方定义与四种保留标记语义以 `references/ref-en.txt` 为准；那份文件只补**实测判据与写法模板**，不重复官方定义。
+
+| 你要做的事 | 前缀 | 关键纪律 |
+|---|---|---|
+| 直接改源片（换人 / 换装 / 换风格 / 换渲染） | `[video editing]` | **保守定律**：保留必须限定到几何与运动，外观明确写"重新绘制"；风格类改动**必须挂关键帧参考**，否则失效 |
+| 从源片末帧往后接 | `[video continuation]` | **必须挂末帧关键帧锚**，否则生成段开头多出约 1 秒前置片段；续写只改动作与内容，**改机位无效** |
+| 只借机位 / 剪辑 / 节奏 | `[reference generation]` | `<Video 1>` 标 `weak_reference` |
+| 把源片动作迁移到新主体 | `[reference generation]` | `<Video 1>` 标 **`attribute_transfer`** 并声明"运动与机位唯一来源"，逐镜写"逐帧沿用" |
+| 换人物（character swap） | `[video editing]` | 见该文件 §六：guide-latent 路线一致性最好；**源片强特征（头发）会回流**，发型必须几何可执行句 + 逐镜点名 |
+
+**⚠️「风格转换」一词两义**：给源片换皮＝ `video editing`；拿源片风格造新片＝ `reference generation`。开写前先问清是哪种。
+
+**合规**：上表提到的关键帧锚可以 `<Picture N>` 独立成条（属首帧 / 末帧 / 关键帧锚用途），但**依然不得出现在 `summary` 与 `detailed_description`**（硬规则 ③ 不变）。
+
 ## 镜头 / 参考图 / 交付格式 —— 四条 2026-10-05 实测补充
 
 **做运镜类镜头（推拉摇移环绕航拍 POV 双人机位…）时，按这个顺序读：**
@@ -74,6 +90,7 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 | `references/output-template.md` | **每次交付** | 交付格式模板（参考图映射 / 生成设置 / **推荐 LoRA** / 节拍 / 六段提示词 / 提交前须知 / 待跑后核对） |
 | `references/negation-guard.md` | 交付前自检 | 否定式两级闸门（L1 词表 + 白名单）、正向化替换表、落地方式与脚本接口 |
 | `references/audio-reference.md` | **挂 `<Audio N>` 参考音频时** | **⭐ 角色形象先验 > 音色参考（`reference` 的根本机制）＋「F0 对了 ≠ 音色被复刻」的判定陷阱**；四种关系标记的实测基线（含 `partially_copy` 区间控制失效）；**Sx 编号须与接线顺序一致**（三线同号）；台词约束不可省；过肩镜头与正向单人约束；`<d>` 豁免白名单 |
+| **`references/video-reference-modes.md`** | **挂 `<Video N>` 参考视频时**（editing / continuation / reference generation 三种） | **⭐ 三玩法判据与选型表**；**editing 保守定律**（保留限定到几何与运动 + 外观"重新绘制"）；**风格类改动必须挂关键帧参考否则失效**（纯文字无效，杠杆：关键帧 > 风格图内联 > 风格 LoRA）；**动作迁移 `attribute_transfer` 写法模板**（"运动与机位唯一来源" + 逐镜"逐帧沿用"）；**continuation 必挂末帧锚**（否则开头多约 1s 前置片段）＋机位重构无效；**换人两路线**（guide-latent v1.1 推荐 / 适配器 v1.5 需更强约束）＋**源片强特征回流**的四条写法 |
 
 ## 音频时间线对齐（带对白音频的 Ref2VA）
 
