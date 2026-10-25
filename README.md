@@ -6,37 +6,36 @@
 
 ---
 
-## 包含清单（共 11 个 skill ＋ 2 个可选进阶 skill）
+## ⭐ 如果你只想装「有用的那几个」（2026-10-25 起推荐）
 
-### 一、本地版生成类（8 个，直接面向各类视频/动画产出）
+本仓库现在分两块：**主线 = H3 提示词**，**其余是 2026-09 的本地版流水线（已归档到 `old/`）**。
 
-| Skill 文件夹 | 用途 |
+**推荐只装 2 个，最多 4 个**：
+
+| 装什么 | 为什么 |
 |---|---|
-| `3d-animation-short-generator-local` | 风格化 3D 动画短片（简报→大纲→角色卡/场景卡→镜头表→分镜→视频提示词） |
-| `brand-promo-video-generator-local` | 品牌 / 产品 / 网站宣传短片 |
-| `co-op-game-intro-generator-local` | 双人合作游戏开场动画 |
-| `handdrawn-live-video-generator-local` | 手绘发光动画 + 实拍融合短视频 |
-| `minimalist-product-ad-generator-local` | 极简 / Apple 风产品广告 |
-| `music-video-subtitle-generator-local` | 歌词排版 / 卡点 MV |
-| `paper-collage-explainer-generator-local` | 纸拼贴科普动画 |
-| `papercraft-stop-motion-explainer-local` | 纸艺定格科普动画 |
+| `h3-video-prompt-cn` | **必装**。H3 六段结构 + 实跑判据（动作迁移、替换／编辑、音频参考、否定式闸门、交付模板） |
+| `h3-camera-motion-lib` | **强烈建议**。镜头句本体——按运镜族给可直接粘贴的中文句子 + 实测状态 + 推荐 LoRA |
+| `h3-prompt-writing-cn` | 可选。官方原版（中文），需要「官方口径对照」时再装 |
+| `h3-prompt-writing` | 可选。官方原版（英文骨架 + `agents/openai.yaml`） |
 
-### 二、提示词 skill（3 个，被上面 8 个在对应步骤调用）
+`old/` 里的 10 个是早期流水线，**2026-09-03 之后没再维护**，且互相强依赖（要装就得 10 个一起装），详见 [`old/README.md`](old/README.md)。
 
-| Skill 文件夹 | 用途 |
-|---|---|
-| `image-prompt-writer-local` | 富结构文生图提示词（通用风格锚 + 分图四段式，每图「中文版 + 英文版」双版），解决"提示词过简"痛点 |
-| `h3-prompt-writing` | 核心视频提示词 skill（MiniMax H3 的 T2VA/I2VA/FL2VA/L2VA/Ref2VA 结构；纯文本、无需 API），含 `agents/openai.yaml` 与 `references/` |
-| `ace-step-1.5-prompt-writer` | ACE-Step 1.5 本地音乐模型提示词（Caption + Lyrics + Metadata 三段） |
+---
 
-> **强依赖**：8 个生成类 skill 在「生图」步会调用 `image-prompt-writer-local`、在「视频」步会调用 `h3-prompt-writing`、在「分离模式 BGM」步会调用 `ace-step-1.5-prompt-writer`。**分享/安装时必须 11 个一起装**，缺任何一个都会在某一步断了调用。
+## 包含清单
 
-### 三、H3 进阶提示词（2 个，**可选安装**，不参与上面 8 个的调用链）
+### 一、主线：H3 提示词（4 个）
 
 | Skill 文件夹 | 版本性质 | 用途 |
 |---|---|---|
-| `h3-video-prompt-cn` | **实践新版**（完整版 / 超集） | 在官方 H3 提示词规范之上，补入**实战判据**：镜头层纪律、参考图角色、否定式闸门、对白写法、交付模板。与仓库里的 `h3-prompt-writing` / `h3-prompt-writing-cn` 是**同一套知识的「完整版 vs 精简版」**，结构同源、不冲突 |
-| `h3-camera-motion-lib` | **实践产出**（全新） | ⭐ **H3 运镜提示词库**——按运镜族（摇镜变焦 / 推拉横移升降 / 环绕翻滚子弹时间 / 特殊复合 / 视角机位 / 装置风格 / 双人关系）给出**可直接粘贴的中文镜头句**＋实测状态（✅🟡❌）＋推荐 LoRA＋坑 |
+| `h3-video-prompt-cn` | **实践新版**（完整版 / 超集，**主力**） | 官方 H3 规范 ＋ 实跑出来的判据：镜头层纪律、参考图两种角色、否定式两级闸门、动作迁移、替换／编辑、音频参考、对白写法、交付模板 |
+| `h3-camera-motion-lib` | **实践产出**（全新） | ⭐ **H3 运镜提示词库**——按运镜族（摇镜变焦 / 推拉横移升降 / 环绕翻滚子弹时间 / 特殊复合 / 视角机位 / 装置风格 / 双人关系）给**可直接粘贴的中文镜头句** ＋ 实测状态（✅🟡❌）＋ 推荐 LoRA ＋ 坑 |
+| `h3-prompt-writing-cn` | **官方原版 · 中文** | 官方六段结构、标签与占位符规范；与 `h3-video-prompt-cn` 同源、不冲突，冲突时以后者为准 |
+| `h3-prompt-writing` | **官方原版 · 英文骨架** | 同上，带 `agents/openai.yaml`（可选 UI 元数据），供英文产出或兼容 UI 使用 |
+
+> **日常只需要前两个**：`h3-video-prompt-cn` 管结构与判据，`h3-camera-motion-lib` 管镜头句本体。
+> 两个官方原版只在「要和官方口径对照」时才装。
 
 #### 「官方原版」与「实践新版」的区别
 
@@ -57,37 +56,53 @@
 > **不依赖 `cinematic-director-camera-dsl`**：镜头句在本库里已可直接取用，camera DSL 降级为可选校验工具；
 > 两者结论冲突时以本库的「实测」一栏为准（本库结论来自 A–G 七组 46 镜 · 约 100 条成片的对照测试）。
 
+### 二、已归档：2026-09 的本地版流水线（10 个，在 `old/` 下）
+
+| Skill 文件夹 | 用途 |
+|---|---|
+| `3d-animation-short-generator-local` | 风格化 3D 动画短片 |
+| `brand-promo-video-generator-local` | 品牌 / 产品 / 网站宣传短片 |
+| `co-op-game-intro-generator-local` | 双人合作游戏开场动画 |
+| `handdrawn-live-video-generator-local` | 手绘发光动画 + 实拍融合 |
+| `minimalist-product-ad-generator-local` | 极简 / Apple 风产品广告 |
+| `music-video-subtitle-generator-local` | 歌词排版 / 卡点 MV |
+| `paper-collage-explainer-generator-local` | 纸拼贴科普动画 |
+| `papercraft-stop-motion-explainer-local` | 纸艺定格科普动画 |
+| `image-prompt-writer-local` | 富结构文生图提示词（上面 8 个的生图步依赖） |
+| `ace-step-1.5-prompt-writer` | ACE-Step 1.5 音乐提示词（分离模式 BGM 依赖） |
+
+> 这 10 个 **2026-09-03 之后未再维护**，已整体移入 `old/`。
+> 它们互相强依赖：8 个生成类在生图步调用 `image-prompt-writer-local`、视频步调用 `h3-prompt-writing`、BGM 步调用 `ace-step-1.5-prompt-writer`——**要装必须 10 个一起装**，单独装会断链。详见 [`old/README.md`](old/README.md)。
+
 ---
 
 ## 安装方法
 
-本仓库为**展平结构**：根目录下就是 11 个 skill 文件夹 + 本 README。**把根目录下除 README.md 外的 11 个 skill 文件夹**整体复制到 WorkBuddy 用户级 skills 目录，重启/刷新即可在 UI 看到：
+### 推荐：只装 H3 主线
+
+把下面 2 个文件夹复制到 WorkBuddy 用户级 skills 目录，重启 / 刷新即可在 UI 看到：
 
 - **Windows**：`C:\Users\<你的用户名>\.workbuddy\skills\`
 - **macOS / Linux**：`~/.workbuddy/skills/`
 
-复制后，你的 skills 目录里应新增这些文件夹：
-
 ```
 .workbuddy/skills/
-├── 3d-animation-short-generator-local/
-├── brand-promo-video-generator-local/
-├── co-op-game-intro-generator-local/
-├── handdrawn-live-video-generator-local/
-├── minimalist-product-ad-generator-local/
-├── music-video-subtitle-generator-local/
-├── paper-collage-explainer-generator-local/
-├── papercraft-stop-motion-explainer-local/
-├── image-prompt-writer-local/
-├── h3-prompt-writing/          （含 agents/ 与 references/ 子文件，需一并复制）
-└── ace-step-1.5-prompt-writer/
+├── h3-video-prompt-cn/     ← 必装（结构 + 判据）
+└── h3-camera-motion-lib/   ← 强烈建议（镜头句本体）
 ```
 
-> 注意：`h3-prompt-writing` 不是空文件夹——它带有 `agents/openai.yaml` 和 `references/base-en.txt`、`references/ref-en.txt`，复制时务必保留整目录。
->
-> 仓库根目录即如上 11 个 skill 文件夹，复制时**排除 README.md 即可**，无需再进任何子目录。
+需要官方口径对照时，再补 `h3-prompt-writing-cn/`、`h3-prompt-writing/`（两者与 `h3-video-prompt-cn` 同源，可共存）。
+
+> `h3-video-prompt-cn` 带 `references/` 子目录（14 个文件），复制时**保留整目录**。
+
+### 若要装已归档的本地版流水线
+
+见 [`old/README.md`](old/README.md)。`old/` 下 10 个必须一起装，且会被装到同一层 skills 目录（即 `old/` 这层只是仓库里的收纳，不要连 `old/` 目录一起复制）。
 
 ---
+
+> ⚠️ **下面四节（设计理念 / 门控硬规则 / 音频模式门 / 典型使用流程）描述的是 `old/` 里那条已归档的本地版流水线。**
+> 只装 H3 主线的读者可以跳过；要复现那条流水线，请连同 [`old/README.md`](old/README.md) 一起看。
 
 ## 设计理念：本地化改造总则 v2
 
@@ -152,6 +167,42 @@
 ---
 
 ## 更新记录（Changelog）
+
+### 2026-10-25 · 仓库重构：旧流水线归档；替换类新增三条判据
+
+**结构**：2026-09 的 10 个本地版 skill 整体移入 `old/`，根目录只留 H3 主线 4 个；README 顶部改为「推荐只装 `h3-video-prompt-cn` 相关」。
+
+**`h3-video-prompt-cn` 内容更新**（长片分段换人 · 6 轮迭代的收敛结论）：
+
+| 文件 | 新增 |
+|---|---|
+| `references/editing-and-replacement.md` | **§十一 替换效果的三个提示词杠杆**：① `<Subject>` 拆分判据——**片中只要有「把某件东西从主体身上取下 / 移开」的动作，这件东西就必须独立成 `<Subject>`**（写在主体外观串里 ⇒ 脸上一份 + 手里一份）；② 主体指代必须带画面可见特征（「**带着耳麦的歌手**」＞「歌手」）；③ 背景只写「**背景、光源与明暗全部严格沿用 `<Video 1>` 对应时刻**」——写「几处极淡的虚化光点」模型就真画出来（实测顶部条带亮度 33.7→61.7、饱和度 0.042→0.132）。附校验清单 +3 项 |
+| `references/negation-guard.md` | **§六 清除清单句不算裸否定**：`X 不保留，改为 Y` 属替换式；`A 和 B 不保留` 属「清除源片元素」的清单句，不属 L1。两个限制：只能清能被正向描述接管的对象；静态贴身物件（耳麦）写「不保留」多数不生效 |
+| `references/camera-and-lora.md` | **§5.4 turbo 权重 ↔ 参考贴合度**：加速 LoRA 是「参考能力」的旋钮，降权重会削弱贴合，表现为段内自编镜头、背景被重画、首帧画出参考图版式。实测 `turbo 4step` **0.8 → 0.9** 消除「段内自编舞台远景 + 乐队镜头」。处置顺序：**先查权重 → 再查参考片分段 → 最后改提示词**；不要用降 turbo 去「去油」 |
+
+同源精简版 `h3-prompt-writing-cn/SKILL.md` 也补了浓缩版「替换类三条杠杆」。
+
+
+
+### 2026-10-15 · `h3-video-prompt-cn` 补入「动作迁移」与「替换／编辑」两套提示词规程
+
+新增 `h3-video-prompt-cn/references/motion-transfer.md`（八节）与 `h3-video-prompt-cn/references/editing-and-replacement.md`（十节），
+并在 `h3-video-prompt-cn/SKILL.md` 的全参考模式段加入**判分岔的路由句**（成片里源视频还在不在）＋ references 索引表登记两行。
+
+**来源**：
+- `motion-transfer.md` —— 2026-10-14 赛博朋克滑板动作迁移实测：参考视频 `舞蹈视频.mp4` ＋ 四视图角色卡，
+  **5 版提示词 × 2 条管线（SelfLift dasiwa / FreeVideo VDN）**、同 seed / 同 9:16 / 同 5+3，用逐帧 Farnebäck 光流做定量判据。
+- `editing-and-replacement.md` —— H3 替换／编辑类（换脸换人换服装换物体换背景换文字换材质换光照、移除、新增）实跑总结。
+
+| 文件 | 核心内容 |
+|---|---|
+| `motion-transfer.md` | **零动作白描**（把动作写成可表演的台词，模型就会照文字演，而不参考视频）＋**运动几何七维逐镜归属**（位置/朝向/轮廓/位移与速度/姿态/占位体积/接触关系）；`<Video N>` 定义升格为"全片运动与机位的唯一来源"；收口句；**⭐ 字数配额（定量）**：2622→1701→1416 字 ⇒ 运动能量 0.726→1.524→1.650、r 0.143→0.437→0.495 **单调改善**，但**精简边界是不能砍掉题材识别特征**（砍掉场景外观后赛博朋克公园退化成普通公园）⇒ **取向 1500–1700 字**；光流四判据（能量比 0.7–1.3× / r>0.4 / 方向一致度>0.15 / 峰值帧）＋残余的"时间轴被压缩"问题；并注明**清晰度不归提示词解决**（σ 低噪区采样步、一采分辨率、turbo LoRA） |
+| `editing-and-replacement.md` | **三归属维度**：外观←参考素材 `<Subject>`／运动几何←源视频 `<Video>`／光学←源视频环境（漏运动几何⇒目标自己乱动、脱手、穿模）；**遮罩形态检测**（半透明 R≈80 为默认路径，不透明为回退）；**七个不可省模块** REBUILD / LIGHT / SYNC / PERFORMANCE / OCCLUSION / FIT / SEAM / NO_ADDED_EVENT；**目标类型→槽位速查表**（10 类逐类给外观槽位、几何锚点、必列不迁移项）；**可见行为四组**必须带同节奏约束（on the same beats）；尺寸冲突 **R1 保持占位（默认）/ R2 忠于参考 / R3 折中**；任务类型标记与 `summary` 固定首句 `The target video is an edited version of <Video 1>.` |
+
+**同日同步**：把本机在用、但仓库版本落后的 `h3-prompt-writing` / `h3-prompt-writing-cn` 覆盖同步回仓库
+（原仓库版 84/89 行，本机版 149/215 行，且本机版多 5 个 references：camera-and-lora / negation-guard / output-template / reference-image-roles / writing-order）。
+
+---
 
 ### 2026-10-14 · `h3-video-prompt-cn` 补入「音频参考」判据
 

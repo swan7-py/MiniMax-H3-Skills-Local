@@ -148,6 +148,8 @@
 
 summary 使用先前定义的 `<Subject N>`、`<Picture N>`、`<Video N>`、`<Audio N>` 标签描述主要 subject、镜头流向与参考资产角色。不要在本段引入新的参考标签。
 
+> **「镜头流向（shot flow）」＝镜头层级的概括**（如「一条连续长镜」「三镜交换」「约第 5 秒凝滞」这一级）；**镜头运动细节（焦距 / 半径 / 高度 / 角度 / 速度 / 景别）一律只写进 `detailed_description`**。在 summary 里复述 DSL 直译的镜头句＝把 summary 写成「镜头说明」而非提示词，属违规。
+
 对于视频编辑任务，任务类型前缀之后以如下方式开始 summary：
 
 ```text

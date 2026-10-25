@@ -61,6 +61,71 @@ When the input includes dialogue/voice audio (`<Audio N>`), **transcribe the aud
 
 > 调用方（设计 skill）应在「简报 / 起始门」先问批次时长上限并贯穿分镜设计；「视频提示词」步骤落实：把设计好的分镜**按时长累加打包为批次**（同批之和 ≤ 上限，一个批次一份 `batch_XX.md`），**不重切分镜**；仅当分镜本身超上限时在生成层做机械分段（音频跨段连续）；**motion-context 在连续批次的衔接边界问**（启用则第 2 段起 22 帧重复 + 时间标注后延 0.917s、第 1 段不变）；参考图使用 `<Picture N>` 占位符而非文件路径。无论上游分镜怎么设计，本步保证：每个批次 ≤ 批次上限；分镜创意与音频时序不被强切破坏。
 
+## 批次自含 —— 禁止跨批引用（2026-10-01 用户反复纠正 · 铁律）
+
+**H3 每个批次都是独立生成**：模型看不到上一批的成片，也不知道存在"上一段"。任何指向前一批的措辞都是无效文本，且会让本批丢掉关键状态。
+
+**禁止写法**：`承接上一段` / `延续上一段` / `接着上一镜` / `如上` / `同上` / `双翼自上一段展开后持续保持展开`；`overall_soundscape` / `non_diegetic_music` 里同样禁（`承接上一段的音色 / 电子脉冲`）。
+
+**正确做法——把上一批的「结果状态」改写成本批能独立表述的「开场状态」**：
+
+| ❌ 跨批引用 | ✅ 自含写法 |
+|---|---|
+| 承接上一段的高速飞行，他仍在疾飞 | 他在高空贴着云海高速掠行，长发与长氅被疾风向后扯成直线 |
+| 双翼自上一段展开后持续保持展开 | 双翼在他背后展开着，随他的甩臂与抬臂摆动 |
+| 承接上一段的疾速电子脉冲推进 | 开场即起的疾速电子脉冲持续推进 |
+
+判据：**把"上一段"删掉后，这句话还能不能独立成立？不能 → 重写成本批自己交代的画面。**
+
+- 例外：`retention_analysis` 里的 `(出现于 [Shot N])` 是本批**内部**镜号索引，不属跨批引用。
+- 批次之间的实际衔接属**分镜设计**，写在批次文件的块外说明里，不进提示词块。
+- 自查：写完 grep `承接` / `上一段` / `上一镜` / `如上` / `延续`，块内应为 0。
+- **反向同样禁（2026-10-01 二次踩坑）**：`下一段` / `下一镜` / `下批` / `作下一段首帧` 也是跨批引用。末帧图只写「视频以 `<Picture N>` 为末帧收束」；它要作下一段首帧这件事写在块外衔接说明里。
+
+## 道具交接 / 朝向 / 破坏形状（2026-10-02 实跑修正）
+
+- **错握**（手握住剑身而非剑柄）：加**镜头跟随句**"镜头随道具后退半步、把整件道具完整收进画面"，并给**部件次序**"自下而上：手 → 短握柄 → 护手 → 剑身 → 剑尖"；道具定义里就写明握持部位。
+- **朝向反了**（写"剑尖朝上"仍朝下）：朝向一律用**部件次序 + 最高/最低点**表达（"剑柄最低 → 剑身竖直向上 → 剑尖是最高的一点"），不要只写"朝上/朝下"。
+- **破坏形状对不上攻击形状**（X 形剑气却把山劈成两半）：**破坏结果 = 攻击形状的镜像**——斩几道、什么交叉角度，裂口就是几道、什么交叉角度。
+- **抽象施法动作建立不了因果**（写"手臂轻轻一送 → 空气被撕开"，裂口根本没出现）：必须给**起势 → 轨迹 → 中间态（关键：先出现一道细光线/细痕）→ 结果（沿中间态张开）** 四步，并在后一镜回指"这道裂口就是方才那道细线张开后的样子"。
+
+## 否定式描述禁用令（No Negative / Absence Descriptions）
+
+H3 has **no negative-prompt field**, and it does not understand absence. Naming what something is NOT makes that named thing MORE likely to appear: the model latches onto the noun and renders it. Verified on a real e-commerce garment test (same seed, same shots — only the negative clauses changed):
+
+| Written (v1) | Result | Fixed (v2) |
+|---|---|---|
+| `a plain flat matte-grey metal slider with no ring, no loop and no circular pull` | a large metal ring puller appeared on the hood and hem | deleted the clause → `a flat matte-grey metal slider`; ring gone |
+| `the image is never globally desaturated` / `never reads as grey, sage-green` / `the fabric is never pushed toward grey` | grade kept drifting grey-green | deleted; kept only the positive name `bright pale ice-blue`; colour recovered |
+| `no percussion, no dramatic swell` (music) | percussion kept showing up | deleted |
+| Shot 3 (badge shot) also described the front zipper | the model spent the shot on the zipper and produced a hand-on-placket / zipper-pulling action | deleted the zipper sentence; Shot 3 became a clean badge shot |
+
+硬规则：
+
+1. **只写「有什么」，不写「没有什么」—— 被禁的是「裸否定」**（见下面的两级判定）。No **bare** `no X` / `without X` / `never X` / `X-free` / `no colour cast` / `no percussion`-style phrasing anywhere in `subject_definitions`, `retention_analysis`, `detailed_description`, `overall_soundscape`, or `non_diegetic_music`.
+2. **要把某个元素去掉，就删掉提到它的整句**，而不是补一句否定。The zipper simply has no ring → write only `a flat matte-grey metal slider`; do NOT append `with no ring, no loop`.
+3. **要表达「空/无」的状态，改成正向状态描写**：`no cars on the street` → `an empty street`；`no text on the wall` → `a bare painted wall`。
+4. **要纠正颜色/风格，只写正向目标值**（`bright pale ice-blue`, `a clean neutral white balance`），不要用「不要偏灰、不要偏绿」纠偏——点名灰绿只会强化灰绿。
+5. **一个分镜只描述这一个分镜要展示的那一样东西。** 不要把别的卖点捎带写进来：胸标镜头里顺带提门襟拉链，模型就会把注意力分给拉链，甚至生出「手摸门襟 / 拉拉链」的动作（实测发生过）。
+6. 写完必须自查：全局搜 `no ` / `never` / `without` / `-free` 及中文 `不` / `没有` / `无`，命中即按下面**两级判定**复核，不要一律删。
+
+### 两级判定：裸否定（禁） vs 替换式否定（安全）— 2026-09-20 实测修订
+
+**「裸否定」= 点名一个不想要的东西，却不给替代物。** 模型抓到名词就画出来 → **禁**。
+**「替换式否定」= 「弃用旧属性 + 显式指定新属性」。** 结构固定为：先点名要丢掉的旧属性，**紧接着用「改为 / 换成 / 而是」给出明确新属性**。此时模型收到的是一条**完整的替换指令**，落点是新属性 → **安全，实战有效**。
+
+| 写法 | 判定 | 说明 |
+|---|---|---|
+| »`<图片 1>`中粉色睡衣**不保留**，角色改为穿着`<Subject 2>`的牛仔外套« | ✅ 安全 | 点名旧属性（睡衣）后**立刻给了新属性**（牛仔外套） |
+| »服装与鞋子**不沿用**`<Picture 1>`，改为穿着由`<Picture 2>…`共同定义的汉服造型« | ✅ 安全 | 同上：弃用 + 指定 |
+| »`with no ring, no loop`« | ❌ 裸否定 | 只点名 ring/loop，无替代物 → 长出大圆环 |
+| »不要偏灰、不要偏绿« | ❌ 裸否定 | 只点名灰/绿 → 强化灰绿 |
+| »不要出现中文« | ❌ 裸否定 | 应改成正向状态描写，或直接删掉整句 |
+
+**判据一句话：否定后面有没有紧跟「改为 / 换成 / 而是」？有 → 安全；没有 → 改掉或删掉。**
+
+> 注意区分：**正向否定词不算违规**——`matte`、`flat`、`plain`、`clean`、`quiet`、`bare`、`empty` 这类是正向形容词，正常使用；被禁的是「no / never / without + 名词」这种指名否定。
+
 ## Special Tokens (MiniMax Extra Tokens)
 
 The released MiniMax-H3 tokenizer (Qwen-based) reserves these fixed special tokens. Their IDs are frozen by the shipped tokenizer — never renumber, paraphrase, or spell them differently. Use them verbatim when wrapping dialogue, lyrics, captions, or marking a cutoff.
