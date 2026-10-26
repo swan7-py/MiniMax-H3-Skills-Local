@@ -156,7 +156,7 @@ F0 落在男声区 / 女声区，有两种完全不同的成因，**单看 F0 �
 python lint_neg.py                 # 否定式扫描：L1 硬拦 + L2 待确认，自动豁免 <d> 段
 python audit_prompt.py [文件...]   # 六项规范审核
                                    # ① 六段结构齐全
-                                   # ② <Picture> 在 summary / detailed_description 计数 = 0
+                                   # ② <Picture> 编号四段一致（不要求计数为 0）
                                    # ③ 无 markdown 装饰符
                                    # ④ 否定式闸门（含白名单与 <d> 豁免）
                                    # ⑤ 首个出现的 (Sx) 是 (S1)

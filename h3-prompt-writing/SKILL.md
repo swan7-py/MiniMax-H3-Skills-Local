@@ -147,3 +147,80 @@ Rules:
 - Keep reference labels consistent (e.g. `<Picture 1>`, `<Video 1>`, `<Audio 1>`) across every section.
 - Prefer concrete visual and audio details over abstract words like "cinematic" or "beautiful".
 - When using keyframes (I2VA / FL2VA / L2VA), clearly state how the first and/or last frame connects to the timeline.
+
+## Making Descriptions Executable (2026-10-26 field notes)
+
+> Root cause behind all of the below: **the model renders adjectives as facts.** Every modifier you write has to be drawn somehow, and its idea of "how" is often not yours.
+
+### 1. Declare the runtime mode before writing
+
+Ref2VA (six sections) and the base modes (three fields, `integrated_multimodal_description`) are **not interchangeable**. Writing the wrong structure invalidates the whole batch. Start each batch file with a line such as `Mode: Ref2VA [keyframe completion]` and confirm it against the actual workflow node.
+
+### 2. Two numbering namespaces
+
+| Namespace | Starts at | Examples | Where it lives |
+|---|---|---|---|
+| Prompt labels | **1** | `<Picture 1>`, `<Subject 1>`, `<Audio 1>` | inside the six sections |
+| Wiring ports | **0** | `ref_image_0`, `ref_audio_0` | the workflow JSON `inputs` keys |
+
+Count from 1 when writing the prompt, from 0 when wiring the graph. Mixing them mis-assigns references, and the error message never points at the real cause.
+
+### 3. Metaphorical verbs are executed literally
+
+Writing `hovering` made a clock hand actually float above the dial, its tip landing between two tick marks. To express "about to touch", use physical evidence only:
+
+- `lies flush against the surface`
+- `its underside in contact with it`
+- `throws a shadow directly beneath itself, and that shadow touches X at its own tip`
+
+> **A shadow meeting the object at its tip is hard proof of co-planarity** — more reliable than any adjective.
+
+### 4. Macro shots must lock what is in frame
+
+An extreme close-up with no boundary lock lets the model invent a background: a dial became *a white wall with a horizon and a sunset*.
+
+Fixed phrasing: `The frame contains only X and Y.`
+
+### 5. Any shot containing a person needs an explicit framing lock
+
+- "torso tilted slightly forward" became a **deep bow** (first-frame NCC 0.549)
+- "cropped at the chest" plus macro-level detail became an **extreme close-up**, losing the sky (0.404)
+- with the framing lock added: 0.9986 / 0.9950
+
+Fixed phrasing: `取景与首帧一致：他全身入画，自头顶到鞋底完整可见，头顶距画面上缘约一成，脚下与画面下缘之间留出一段空地。`
+
+> Corollary: **words about gaze and posture directly determine body posture.** "gaze dropped to the ground ahead" induces a forward hunch — if he should stand upright, do not mention looking down.
+
+### 6. Anything with a reading needs angular relations
+
+"two hands radiating at different angles" produced arbitrary angles; three of four clock faces read the wrong time (11:20 / 12:18 / 10:15).
+
+Write instead: **how many degrees off vertical, which hand is to the left, how narrow the V closes.**
+
+### 7. Cross-shot continuity checklist (verify shot by shot before delivery)
+
+| # | Item | This project |
+|---|---|---|
+| 1 | Part count of a recurring prop | the giant clock has **two hands**, consistent across all five shots |
+| 2 | Readable text present or not | dial carries **no numerals**, only a ring of radial ticks |
+| 3 | Reading state | every dial frozen one minute before midnight (narrow V at the top) |
+| 4 | The film's single exception | only the caesium-clock shot is cool-toned |
+
+## Extended references (Chinese)
+
+The full playbook lives alongside this file in `references/`. Highlights:
+
+| File | Covers |
+|---|---|
+| `camera-and-lora.md` | camera DSL, LoRA selection per motion type |
+| `reference-image-roles.md` | when an image is a `<Picture N>` vs inlined into `<Subject N>` |
+| `video-reference-modes.md` | motion transfer, video continuation, character swap |
+| `editing-and-replacement.md` | replacement / removal editing discipline |
+| `audio-reference.md` | `<Audio N>` relationships, voice cloning vs reference |
+| `negation-guard.md` | naked negation vs replacement negation, whitelist |
+| `multi-target-and-hit.md` | multi-target framing and readability |
+| `card-derived-animation.md` | turning a still skill card into a motion beat |
+| `motion-transfer.md` | transferring motion from a source video |
+| `writing-order.md` | occlusion and reveal ordering |
+| `creative-dna-library.md` | reusable creative mechanisms |
+| `base-en.txt` / `ref-en.txt` | the official T2VA/I2VA/FL2VA/L2VA and Ref2VA specs |

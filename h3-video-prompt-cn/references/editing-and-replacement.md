@@ -152,7 +152,7 @@ N/A
 
 ## 九、本 skill 的三条硬纪律如何落到编辑类
 
-1. **`<Picture N>` 只出现在 `subject_definitions` 与 `retention_analysis`**：仅用于定义外观的参考图**内联进 `<Subject 2>`**，不单独成条；`summary` 与 `detailed_description` 里 `<Picture` 计数必须为 **0**。
+1. **`<Picture N>` 编号全局不变**：仅用于定义外观的参考图**内联进 `<Subject 2>`**，不单独成条（`subject_definitions` / `retention_analysis` 里出现即可）；`summary` 与 `detailed_description` 允许引用已定义的编号，但不得在此新起编号。同一张图在四段里必须始终是同一个号。
 2. **否定式两级闸门**照样适用：`seamless` 类的否定一律改成正向（`carries no trace of the source overlay` → `the join stays continuous with no seam`）；「不要参考图的棚光」要写成**替换式**（`takes the warm lamplight from the left rather than the reference image's overhead product light`）。详参 `negation-guard.md`。
 3. **书写顺序铁律**（`writing-order.md`）在遮挡句上最容易破功：**先出现的先写**，被压在最上层的元素写在最前。
 
@@ -170,7 +170,7 @@ N/A
 - [ ] 收口句在：*Nothing that is not visible in <Video 1> is added…*
 - [ ] 无目的 / 身份 / 剧情推断；无 `swap / replace / chroma / green screen / mask` 等后期术语
 - [ ] 重建内容与参考图 / 用户文字逐项对得上（形状 · 颜色图样 · 材质光学 · 附属细节），无漏项无加戏
-- [ ] 过否定式闸门；`<Picture` 在 summary / detailed_description 计数为 0
+- [ ] 过否定式闸门；`<Picture` 编号四段一致，无新起编号
 - [ ] **保留但移位**的物件（成片里仍可见）已独立成 `<Subject>`，主体外观串里没有它
 - [ ] **待清除物件**（墨镜 / 眼镜 / 耳麦 / 耳机 / 耳返 / 帽子 / 手持麦 / 烟 / 包 等）**未**编号，逐件列进 `<Video 1>` 的「待重建区域」，并写明该位置由什么取代；`<Video 1>` retention 标 `partially_preserved`
 - [ ] 待清除清单**列全**（耳返、手表、戒指、烟这类小件最易漏）；围绕它们的动作（推镜 / 扶帽 / 举麦）已交代落点

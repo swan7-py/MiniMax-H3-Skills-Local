@@ -67,18 +67,26 @@ retention_analysis:
 
 ---
 
-## 五、`<Picture N>` 不进 `summary` 与 `detailed_description`（2026-10-09）
+## 五、`<Picture N>` 在四段里都能用；错的是编号漂移（2026-10-26 按官方规范修订）
 
-| 段落 | `<Picture N>` 可否出现 |
+| 段落 | `<Picture N>` |
 |---|---|
-| `subject_definitions` | ✅ **必须出现**（来源声明） |
-| `retention_analysis` | ✅ 可（图真的作首帧 / 末帧 / 关键帧锚时） |
-| `summary` | ❌ **禁止** |
-| `detailed_description` | ❌ **禁止** |
+| `subject_definitions` | ✅ 必须出现（来源声明 / 独立成条定义） |
+| `retention_analysis` | ✅ 必须出现（逐条声明保留关系） |
+| `summary` | ✅ 可用已定义的编号，**不得在此新起编号** |
+| `detailed_description` | ✅ 可用，在首次出现处与角色生效处引用 |
 
-**成因**：`<Picture N>` 在规范里的语义就是"一个具体的帧"。写进正在描述画面的正文＝告诉模型"这一帧长成这张图" → **整段运镜会被这张图的构图拽住**。剧情一律用 `<Subject N>` 讲。
+**官方原文依据**（`references/ref-en.txt`）：
+`summary`「The summary uses the previously defined `<Subject N>`, `<Picture N>`, `<Video N>`, and `<Audio N>` labels… Do not introduce new reference labels in this section.」
+`detailed_description` 对照表「Reference information → Inserts `<Subject N>`, `<Picture N>`, `<Video N>`, and `<Audio N>` at their first appearance and where their roles apply」。
 
-**机械自检（交付前必做）**：抠出 `summary` 与 `detailed_description` 两段，统计 `<Picture` 出现次数 → **应为 0**。
+**真正的错误是编号漂移**：同一张图在 `subject_definitions` 是 `<Picture 1>`，到 `detailed_description` 变成 `<Picture 2>`——模型会把它们当成两张不同的图。
+
+**写法建议（可读性偏好，非禁令）**：讲剧情与状态用 `<Subject N>`，讲帧本身（首帧 / 末帧 / 构图对齐）才用 `<Picture N>`。
+
+> 早期版本（2026-10-08／10-09）曾把"summary 与 detailed_description 里 `<Picture>` 计数必须为 0"写成硬规则，
+> 与官方规范冲突，已于 2026-10-26 撤销。当时的实测现象是"写进运镜句里构图被拽住"，
+> 该现象若复现，按排障处理（把该处换成 `<Subject N>` 试一次），不要升格为禁令。
 
 > 完整版（含 F10"环境修补句变成构图指令"事故、双主体防复制写法）见专家包
 > `h3-camera-motion-lib/references/00-core-discipline.md` §七/§八 与 `06-rig-and-device.md` F10。

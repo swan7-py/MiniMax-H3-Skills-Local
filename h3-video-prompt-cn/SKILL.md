@@ -45,13 +45,14 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
   ——独立成条＝把它声明成构图锚；角色卡承载的是角色，镜头起点由 `detailed_description` 的文字交代。
 - 详解见 `references/reference-image-roles.md`；镜头层纪律见 `references/camera-and-lora.md` §一。
 
-**③ `<Picture N>` 只出现在 `subject_definitions`（来源声明）与真正的首帧 / 末帧 / 关键帧锚定——`summary` 与 `detailed_description` 里一律不出现 `<Picture N>`，剧情一律用 `<Subject N>` 讲。**
+**③ 参考标签的编号一经指定就全局不变；四个段落都可以用 `<Picture N>`，但不得在某一段里新起编号。**
 
-- 成因（2026-10-08 用户指出，此前已翻车三次）：`<Picture N>` 一旦出现在 `detailed_description` 里，模型会把它当成**锚点帧 / 构图锚**对待，构图被拉回那张图的取景；`summary` 里用它讲剧情同理。
-- ✗ `<Subject 1>——<Picture 1> 中的少女——立在床边的地板上` ｜ ✗ `<Picture 1> 中少女的面容与整套汉服在这一刻清晰可见` ｜ ✗ summary 写 `人物身份与造型均来自 <Picture 1>`
-- ✓ `<Subject 1> 立在床边的地板上`／`<Subject 1> 的面容与整套汉服在这一刻清晰可见`；参考关系只在 `subject_definitions`（`<Subject 1> 是 <Picture 1> 四视图角色卡中的少女…`）与 `retention_analysis` 里说清。
-- **机械自检（交付前必做）**：把 `summary` 与 `detailed_description` 两段抠出来数 `<Picture` 出现次数，**应为 0**。
-  `python - <<'PY'` 不方便时就用肉眼按段核查；两段之外（subject_definitions / retention_analysis / 交付说明）出现 `<Picture N>` 是正常的。
+- 官方依据（`references/ref-en.txt`）：`summary`「uses the previously defined `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` labels…**Do not introduce new reference labels in this section**」；`detailed_description`「Inserts `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` at their first appearance and where their roles apply」。
+- 即：`<Picture 1>` 在 `subject_definitions` 里定义成什么，后面所有段落里就还是那个东西，不换号、不重排。**编号漂移**（同一张图在不同段落变成 `<Picture 2>`）才是真错误。
+- 写法上仍建议：讲**剧情与状态**优先用 `<Subject N>`（它是"人/物/环境"，语义更贴），讲**帧本身**（这里是首帧、那里是末帧、构图对齐这张）才用 `<Picture N>`。这是可读性偏好，不是禁令。
+- ✗ 反例（真正的错误）：`subject_definitions` 里写 `<Picture 1>` 是首帧，`detailed_description` 里却出现 `<Picture 2>` 指同一张图。
+- ✓ `<Subject 1> 立在床边的地板上`／`<Subject 1> 的面容与整套汉服在这一刻清晰可见`；参考关系在 `subject_definitions`（`<Subject 1> 是 <Picture 1> 四视图角色卡中的少女…`）与 `retention_analysis` 里说清。
+- ⚠️ 一条实测备注，不是规则：把 `<Picture N>` 写进正在描述运镜的句子里，个别批次会让模型把构图往那张图拽。**如果出现构图被拽住**，先试着把该处换成 `<Subject N>`；这是排障手段，不要反过来升格成禁令。
 
 阅读 `references/ref-en.txt` 了解标签规则、保留分析与完整示例。创意机制可从 `references/creative-dna-library.md` 提取。
 
@@ -79,7 +80,7 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 
 **⚠️「风格转换」一词两义**：给源片换皮＝ `video editing`；拿源片风格造新片＝ `reference generation`。开写前先问清是哪种。
 
-**合规**：上表提到的关键帧锚可以 `<Picture N>` 独立成条（属首帧 / 末帧 / 关键帧锚用途），但**依然不得出现在 `summary` 与 `detailed_description`**（硬规则 ③ 不变）。
+**合规**：上表提到的关键帧锚可以 `<Picture N>` 独立成条（属首帧 / 末帧 / 关键帧锚用途）；后续段落的写法见硬规则 ③（编号全局不变，不新起编号）。
 
 ## 镜头 / 参考图 / 交付格式 —— 四条 2026-10-05 实测补充
 
@@ -89,7 +90,7 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 |---|---|---|
 | **`h3-camera-motion-lib`（独立 skill）** | **要写镜头运动的句子时，第一个读它** | ⭐ **H3 运镜提示词库**：7 个运镜族 + 核心纪律 + LoRA 台账 + 现实边界，每条给**可直接粘贴进 `detailed_description` 的中文镜头句**与实测状态（✅/🟡/❌）。**不依赖 camera DSL**——DSL 降级为可选校验，两者冲突时以库的「实测」一栏为准 |
 | `references/camera-and-lora.md` | 要决定挂不挂 LoRA，或查变量纪律速查 | **变量纪律**（摇镜不写焦距 / 推拉必写焦距锁定 / 变焦用"变焦"）；**LoRA 优先级：专用 ＞ 不加 ＞ Jojocodex（仅特定情况）**＋触发词台账；起手景别的现实预期（**镜头句本体见上一行的库**） |
-| `references/reference-image-roles.md` | 有多张参考图时 | **构图锚 vs 内联定义**（独立成条＝构图锚，会被拉回它的构图）；环境一律 `weak_reference`；**环境描写越细起手越宽**（删环境是唯一有效的"锁半身"手段）；首帧锚定的取舍 |
+| `references/reference-image-roles.md` | 有多张参考图时 | **构图锚 vs 内联定义**（独立成条＝构图锚，会被拉回它的构图）；环境一律 `weak_reference`；**环境写"描述式"不写"清单式"**（清单会把画面推宽）；`<Picture N>` 只进 `subject_definitions`；首帧锚定的取舍 |
 | `references/writing-order.md` | 每条提示词动笔第一句之前 | **书写顺序铁律：画面里"先出现的东西"写在最前面**；遮挡/揭示、跨越/甩镜/航拍、POV 三类起手写法 |
 | `references/output-template.md` | **每次交付** | 交付格式模板（参考图映射 / 生成设置 / **推荐 LoRA** / 节拍 / 六段提示词 / 提交前须知 / 待跑后核对） |
 | `references/negation-guard.md` | 交付前自检 | 否定式两级闸门（L1 词表 + 白名单）、正向化替换表、落地方式与脚本接口 |
@@ -97,6 +98,67 @@ Ref2VA 改写依次使用 `subject_definitions`、`summary`、`retention_analysi
 | **`references/video-reference-modes.md`** | **挂 `<Video N>` 参考视频时**（editing / continuation / reference generation 三种） | **⭐ 三玩法判据与选型表**；**editing 保守定律**（保留限定到几何与运动 + 外观"重新绘制"）；**风格类改动必须挂关键帧参考否则失效**（纯文字无效，杠杆：关键帧 > 风格图内联 > 风格 LoRA）；**动作迁移 `attribute_transfer` 写法模板**（"运动与机位唯一来源" + 逐镜"逐帧沿用"）；**continuation 必挂末帧锚**（否则开头多约 1s 前置片段）＋机位重构无效；**换人两路线**（guide-latent v1.1 推荐 / 适配器 v1.5 需更强约束）＋**源片强特征回流**的四条写法 |
 | `references/motion-transfer.md` | **要把参考视频的动作 / 机位 / 硬切迁到别的角色或场景上时** | **零动作白描**（别把动作写成可表演的台词）＋**运动几何七维逐镜归属**位置/朝向/轮廓/位移与速度/姿态/占位体积/接触关系；`<Video N>` 定义升格；收口句；**⭐ 字数配额：2622→1701→1416 字 ⇒ 运动能量 0.73→1.52→1.65、r 0.14→0.44→0.50（单调），但砍掉场景外观会让赛博朋克退化成普通公园 ⇒ 取向 1500–1700 字**；光流四判据与残余的"时间轴被压缩"问题 |
 | `references/editing-and-replacement.md` | **要替换 / 编辑源视频里的某个对象时**（换脸换人换服装换物体换背景换文字换材质换光照、移除、新增） | **三归属维度**（外观←参考素材／运动几何←源视频／光学←源视频环境）；遮罩形态检测（半透明 R≈80 为默认路径）；**七个不可省模块**（REBUILD / LIGHT / SYNC / PERFORMANCE / OCCLUSION / FIT / SEAM / NO_ADDED_EVENT）；目标类型→槽位速查表；可见行为四组必须带同节奏约束；尺寸冲突 **R1 保持占位（默认）/ R2 忠于参考 / R3 折中**；摘要固定首句与任务类型标记 |
+
+## 构图可执行性 —— 把形容词变成模型能执行的东西（2026-10-26 实跑沉淀）
+
+> 共同根源：**模型会把形容词当事实渲染**。你对它说的每个修饰语，它都要想办法画出来，而它理解的"画法"往往是你没预料的那一种。下面五条是同一原理的五个实例。
+
+### ① 开写前先声明运行模式
+
+本批跑的是 **Ref2VA（六段）** 还是**基础模式（三字段 `integrated_multimodal_description`）**？写错整套作废。
+批次文件开头写一行 `模式：Ref2VA [keyframe completion]`，与工作流节点对齐后再落笔。
+
+### ② 两套命名空间，起始编号不同
+
+| 命名空间 | 起始 | 实例 | 出现在哪 |
+|---|---|---|---|
+| **提示词标签** | **1** | `<Picture 1>` `<Subject 1>` `<Audio 1>` | 六段正文里 |
+| **接线端口** | **0** | `ref_image_0` `ref_audio_0` | 工作流 JSON 的 inputs 键 |
+
+写提示词从 1 数，接端口从 0 数。混用会导致挂图错位且报错信息不指向真正原因。
+
+### ③ 比喻动词会被按字面执行
+
+写 `hovering`（悬停）→ 指针真的浮在盘面上方，尖端落在两格刻度之间。要表达"即将触碰"，只能用**物理证据**：
+
+- 贴平：`lies flush against the surface`
+- 底面接触：`its underside in contact with it`
+- 影子：`throws a shadow directly beneath itself, and that shadow touches X at its own tip`
+
+> **影子相接是"两者共面"的硬证据**，比任何形容词都可靠。判据：想表达"挨着 / 贴着 / 即将碰到"，就写"接触 + 影子落在正下方"。
+
+### ④ 微距必须锁"画面里只有什么"
+
+只写"极限微距"而不锁边界，模型会自己补背景——实测把一块表盘补成了**带地平线和落日的白墙**。
+
+固定句式：`The frame contains only X and Y.`
+
+### ⑤ 含人物的镜必须写景别锁
+
+- 只写"略前倾" → 被放大成**深鞠躬**（首帧相似度 0.549）
+- 只写"取到胸口" + 一堆微距式细节 → 被推成**大特写**，天空全丢（0.404）
+- 补上景别锁后：0.9986 / 0.9950
+
+固定句式：`取景与首帧一致：他全身入画，自头顶到鞋底完整可见，头顶距画面上缘约一成，脚下与画面下缘之间留出一段空地，地平线横在中景。`
+
+> 推论：**描述视线与姿态的词会直接决定体态**。写"视线落在身前地面"会诱导前倾弯腰——想让他站着，就别提"看地面"。
+
+### ⑥ 有读数的物体必须写角度关系
+
+写"两根针以不同角度放射" → 模型给任意角度。实测四张钟面里三张读不出目标时刻（11:20 / 12:18 / 10:15）。
+
+必须写：**离竖直方向偏几度、谁在谁的左边、收成多窄的 V**。
+
+### ⑦ 跨镜连续性清单（交付前逐镜核对，任一项不符即穿帮）
+
+| # | 项 | 本项目实例 |
+|---|---|---|
+| 1 | 同一道具的结构件数 | 巨钟**两根针**，五个含钟镜头必须一致 |
+| 2 | 有无可读文字 | 盘面**无数字**，只有一圈放射刻度 |
+| 3 | 读数状态 | 所有钟面都停在午夜前一分（窄 V 落在盘顶） |
+| 4 | 全片唯一的例外 | 只有铯钟一场是冷调，其余全暖橙 |
+
+---
 
 ## 音频时间线对齐（带对白音频的 Ref2VA）
 

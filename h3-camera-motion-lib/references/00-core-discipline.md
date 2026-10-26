@@ -149,18 +149,24 @@ At 00:00.500 开始绕行；At 00:09.500 回到正面收住。      ← 起止�
 
 ---
 
-## 八、`<Picture N>` 不进 `summary` 与 `detailed_description`
+## 八、`<Picture N>` 在四段里都能用；错的是编号漂移（2026-10-26 按官方规范修订）
 
-| 段落 | 可否出现 `<Picture N>` |
+| 段落 | `<Picture N>` |
 |---|---|
-| `subject_definitions` | ✅ **必须出现**（来源声明：`<Subject 1> 是 <Picture 1> 四视图角色卡中的…`） |
-| `retention_analysis` | ✅ 可（图真的作首帧 / 末帧 / 关键帧锚时） |
-| `summary` | ❌ 禁止 |
-| `detailed_description` | ❌ 禁止 |
+| `subject_definitions` | ✅ **必须出现**（来源声明 / 独立成条定义：`<Subject 1> 是 <Picture 1> 四视图角色卡中的…`） |
+| `retention_analysis` | ✅ **必须出现**（逐条声明保留关系） |
+| `summary` | ✅ 可用**已定义**的编号，**不得在此新起编号** |
+| `detailed_description` | ✅ 可用，在首次出现处与角色生效处引用 |
 
-**成因**：`<Picture N>` 在规范里的语义就是"一个具体的帧"。写进正在描述画面的正文＝告诉模型"这一帧长成这张图" → **整段运镜会被这张图的构图拽住**。剧情一律用 `<Subject N>` 讲。
+**官方原文依据**（`ref-en.txt`）：`summary`「The summary uses the previously defined `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` labels… **Do not introduce new reference labels in this section.**」；`detailed_description` 对照表「Inserts `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` at their first appearance and where their roles apply」。
 
-**机械自检**：抠出 `summary` 与 `detailed_description` 两段，统计 `<Picture` 出现次数 → **应为 0**。
+**真正的错误是编号漂移**：同一张图在 `subject_definitions` 是 `<Picture 1>`、到 `detailed_description` 变成 `<Picture 2>` → 模型把它们当成**两张不同的图**。
+
+**写法建议（可读性偏好，非禁令）**：讲**剧情与状态**用 `<Subject N>`；讲**帧本身**（首帧 / 末帧 / 构图对齐）才用 `<Picture N>`。
+
+> ⚠️ **本条曾于 2026-10-08／10-09 被写成「`summary` 与 `detailed_description` 里 `<Picture` 计数必须为 0」的硬规则，与官方规范冲突，2026-10-26 撤销。**
+> 当时的实测现象（把 `<Picture N>` 写进正在描述运镜的句子 → 构图被那张图拽住）**若复现**，按排障处理：把该处换成 `<Subject N>` 试一次即可。
+> **机械自检改为**：抠出四段，核对同一张图的编号**全程一致**（不是数 0）。
 
 ---
 

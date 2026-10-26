@@ -16,8 +16,8 @@
 |---|---|
 | `h3-video-prompt-cn` | **必装**。H3 六段结构 + 实跑判据（动作迁移、替换／编辑、音频参考、否定式闸门、交付模板） |
 | `h3-camera-motion-lib` | **强烈建议**。镜头句本体——按运镜族给可直接粘贴的中文句子 + 实测状态 + 推荐 LoRA |
-| `h3-prompt-writing-cn` | 可选。官方原版（中文），需要「官方口径对照」时再装 |
-| `h3-prompt-writing` | 可选。官方原版（英文骨架 + `agents/openai.yaml`） |
+| `h3-prompt-writing-cn` | 可选。**全量中文版**（自带 16 份 references），只想装一个时选它 |
+| `h3-prompt-writing` | 可选。英文骨架 + `agents/openai.yaml`，现同样自带 16 份 references |
 
 `old/` 里的 10 个是早期流水线，**2026-09-03 之后没再维护**，且互相强依赖（要装就得 10 个一起装），详见 [`old/README.md`](old/README.md)。
 
@@ -31,7 +31,7 @@
 |---|---|---|
 | `h3-video-prompt-cn` | **实践新版**（完整版 / 超集，**主力**） | 官方 H3 规范 ＋ 实跑出来的判据：镜头层纪律、参考图两种角色、否定式两级闸门、动作迁移、替换／编辑、音频参考、对白写法、交付模板 |
 | `h3-camera-motion-lib` | **实践产出**（全新） | ⭐ **H3 运镜提示词库**——按运镜族（摇镜变焦 / 推拉横移升降 / 环绕翻滚子弹时间 / 特殊复合 / 视角机位 / 装置风格 / 双人关系）给**可直接粘贴的中文镜头句** ＋ 实测状态（✅🟡❌）＋ 推荐 LoRA ＋ 坑 |
-| `h3-prompt-writing-cn` | **官方原版 · 中文** | 官方六段结构、标签与占位符规范；与 `h3-video-prompt-cn` 同源、不冲突，冲突时以后者为准 |
+| `h3-prompt-writing-cn` | **全量版 · 中文**（2026-10-26 起） | 官方六段结构 + 专家包全部实战判据，**自带 16 份 references**；改动先改它，再同步回 `h3-video-prompt-cn` |
 | `h3-prompt-writing` | **官方原版 · 英文骨架** | 同上，带 `agents/openai.yaml`（可选 UI 元数据），供英文产出或兼容 UI 使用 |
 
 > **日常只需要前两个**：`h3-video-prompt-cn` 管结构与判据，`h3-camera-motion-lib` 管镜头句本体。
@@ -42,12 +42,13 @@
 | | `h3-prompt-writing` / `h3-prompt-writing-cn`（**官方原版**） | `h3-video-prompt-cn`（**实践新版**） |
 |---|---|---|
 | 来源 | MiniMax 官方 H3 提示词指南（六段结构、标签与占位符、参考资产规则），本分享包只做"本地版 · 纯提示词 · 逐步确认"的改造封装 | 官方原版 **＋ 我们实跑之后补进去的判据** |
-| 体量 | SKILL.md 215 行 / 11 文件（精简） | SKILL.md 295 行 / 13 文件（**超集**） |
+| 体量 | SKILL.md **226 行**（英）/ **355 行**（中），references 各 **16 份** | SKILL.md **383 行**，references **16 份** |
 | 多了什么 | — | 镜头层纪律、参考图两种角色、否定式两级闸门、对白 `<d>` 写法、隔空操控动词纪律、跨镜点名、大型附属物尺度、道具交接、多目标打击、交付模板等**踩坑条目** |
 | 适用 | 8 个本地版生成 skill 的调用依赖，**必须装** | 你直接写 H3 提示词时用它更细；**可选**，不装也不影响流水线 |
 
 > **一句话**：官方原版告诉你"H3 提示词长什么样"，实践新版告诉你"哪些写法在实跑里会翻车"。
-> 两份可以同时装——`h3-prompt-writing-cn` 的 SKILL.md 里已注明：**冲突时以 `h3-video-prompt-cn`（专家包版）为准**。
+> **两份现已合并为同一套 references（16 份，逐字节一致），并且 `h3-prompt-writing-cn` 于 2026-10-26 升级为「全量中文版」**——
+> 它已整合专家包版全部内容，**改动先改 `h3-prompt-writing-cn`，再同步回 `h3-video-prompt-cn`**（权威方向与 2026-10-25 之前相反）。
 
 #### 两个进阶 skill 的分工
 
@@ -93,7 +94,8 @@
 
 需要官方口径对照时，再补 `h3-prompt-writing-cn/`、`h3-prompt-writing/`（两者与 `h3-video-prompt-cn` 同源，可共存）。
 
-> `h3-video-prompt-cn` 带 `references/` 子目录（14 个文件），复制时**保留整目录**。
+> `h3-video-prompt-cn` 带 `references/` 子目录（**16 个文件**），复制时**保留整目录**。
+> `h3-prompt-writing` / `h3-prompt-writing-cn` 现在也各带一套 **完全相同的 16 份 references**（含中文 `base.txt` / `ref.txt` 与官方英文 `base-en.txt` / `ref-en.txt`），装哪个都能独立使用。
 
 ### 若要装已归档的本地版流水线
 
@@ -168,6 +170,24 @@
 
 ## 更新记录（Changelog）
 
+### 2026-10-26 · 三份 skill 的 references 统一；`<Picture N>` 旧硬规则撤销；新增「构图可执行性」7 条
+
+**结构**：`h3-prompt-writing` / `h3-prompt-writing-cn` / `h3-video-prompt-cn` 三处的 `references/` 收敛为**同一套 16 份文件（逐字节一致）**；`h3-prompt-writing` 首次获得整套 references（此前只有 `ref-en.txt` / `ref.txt`）。`h3-prompt-writing-cn` 由「精简版」升级为**全量中文版**，并接管权威方向：**改动先改它，再同步回 `h3-video-prompt-cn`**。
+
+| 文件 | 新增 / 变更 |
+|---|---|
+| 三份 `SKILL.md` + `reference-image-roles.md` | **撤销 2026-10-08／09 的硬规则「`summary` 与 `detailed_description` 里 `<Picture` 计数必须为 0」**——它与官方 `ref-en.txt` 冲突（官方只要求"不新起编号"）。新口径：**四段都能用 `<Picture N>`，错的是编号漂移**；旧的"计数为 0"降级为排障备注（写进运镜句导致构图被拽时，该处换 `<Subject N>` 试一次）。机械自检改为「**编号四段一致**」 |
+| `ref-en.txt` | 补一句：`summary` 里的 "shot flow" 指**镜头级概括**（一镜到底 / 三镜对切），**焦段、半径、高度、角度、速度、景别等运镜细节只写在 `detailed_description`** |
+| 三份 `SKILL.md` | **新增「构图可执行性 —— 把形容词变成模型能执行的东西」7 条**：① 开写前声明运行模式（Ref2VA 六段 vs 基础三字段）；② 两套命名空间（提示词标签从 **1** 数、接线端口 `ref_image_0` 从 **0** 数）；③ 比喻动词按字面执行（`hovering` → 指针真浮在盘面上方），「挨着」必须写物理证据（贴平 / 底面接触 / 影子在正下方相接）；④ 微距必须锁「画面里只有 X 和 Y」；⑤ 含人物镜必须写景别锁（实测 0.549 / 0.404 → 加锁 0.9986 / 0.9950），且**视线词直接决定体态**；⑥ 有读数物体必须写角度关系（四张钟面三张读错）；⑦ 跨镜连续性清单 4 项（道具件数 / 可读文字 / 读数状态 / 唯一例外） |
+| `h3-prompt-writing-cn/SKILL.md` | **并入专家包全部实战纪律**：参考图「一图多态」按位置拆 `<Subject>`（防多生一把扇子）、隔空操控动词纪律（`flick` → 会画成手握道具，改 `point`）、手势粒度不可控（双指并拢恒渲染成单指，只能从身体层面加码）、风格统一全量替换 + 残留自查、长镜合并前查显存、5s 单条约承载 2 个动作节拍、参考命名不写「定稿」、`fully_preserved` 不控制硬度、跨镜持续元素每镜点名、大型附属物给显式尺度倍数 |
+| `h3-prompt-writing-cn/references/` | 补入 7 份：`audio-reference` / `card-derived-animation` / `creative-dna-library` / `editing-and-replacement` / `motion-transfer` / `multi-target-and-hit` / `video-reference-modes` |
+| `camera-and-lora.md` | **§5.4 turbo 权重 ↔ 参考贴合度**：加速 LoRA 是「参考能力」的旋钮，权重越高越贴参考；降权重会表现为段内自编镜头、背景被重画、首帧画出参考图版式。实测 `turbo 4step` **0.8 → 0.9** 消除「段内自编舞台远景 + 乐队」。**不要用降 turbo 去油**。Dutch Angle 定稿 `strength = 2.0`（1 ≈ 20°） |
+| `negation-guard.md` | **新增 §六 / 6.1 / 6.2 / 6.3**：清除清单句（`A 和 B 不保留` + 同段正向句接管）不算裸否定；**效力排序 `删除` ＞ `不保留，改为 Y` ＞ `没有 X`**（清过闸门 ≠ 有效）；**载体比句式更重要**——待清除物件必须挂在 `<Video 1>` 的待重建区域，编成 `<Subject N>` 反而要求保留它；`不出现` 属 L1 硬拦 |
+| `h3-video-prompt-cn/references/reference-image-roles.md` | 环境段重写为「**描述式 vs 清单式**」（效果上限放大 2.4–3×，**仍不到腰部以上**，正解是改用 I2VA 真实首帧）；F10 事故案例与「防复制双保险」写法**移出**，改为指针指向 `h3-camera-motion-lib` §七/§八 与 `06-rig-and-device.md` F10 |
+| `h3-camera-motion-lib/references/00-core-discipline.md` | **§八 同步修订**：原「`<Picture N>` 不进 `summary` 与 `detailed_description`… 计数应为 0」与撤销后的新规则冲突，改为「编号漂移才是错」 |
+
+> 另有 `audio-reference.md` / `output-template.md` / `writing-order.md` 三处仅换行 / BOM 差异，内容无实质变化。
+
 ### 2026-10-25 · 仓库重构：旧流水线归档；替换类新增三条判据
 
 **结构**：2026-09 的 10 个本地版 skill 整体移入 `old/`，根目录只留 H3 主线 4 个；README 顶部改为「推荐只装 `h3-video-prompt-cn` 相关」。
@@ -239,7 +259,7 @@
 
 > 我们自己贡献的部分（不属于上述来源）：A–G 七组 46 镜、约 100 条 480P 成片 + 29 条 1080P 双采成片的对照测试结论——
 > 每镜的**实测状态（✅/🟡/❌）**、推荐 LoRA 与权重、踩坑清单，以及"环境写描述式不写清单式""整圈的圈数与时长必须同时给"
-> "`<Picture N>` 不进 summary / detailed_description"等**校准后的写法纪律**。
+> "`<Picture N>` 编号四段一致（禁止的是编号漂移，不是出现）"等**校准后的写法纪律**。
 
 ---
 

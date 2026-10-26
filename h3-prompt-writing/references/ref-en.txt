@@ -146,6 +146,8 @@ When editing a source video, use `audio reuse` as well if its original audio rem
 
 The summary uses the previously defined `<Subject N>`, `<Picture N>`, `<Video N>`, and `<Audio N>` labels to describe the main subjects, shot flow, and roles of the reference assets. Do not introduce new reference labels in this section.
 
+> **"Shot flow" here means a shot-level summary** (e.g. "one continuous long take", "a three-shot exchange"); **camera-movement detail (focal length / radius / elevation / angle / speed / shot size) belongs only in `detailed_description`**. Restating the DSL camera sentence inside the summary turns it into a camera note rather than a prompt.
+
 For video-editing tasks, begin the summary after the task-type prefix with:
 
 ```text
