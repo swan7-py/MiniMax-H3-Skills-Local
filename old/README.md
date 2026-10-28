@@ -17,7 +17,7 @@
 - `image-prompt-writer-local` —— 生图步调用
 - `ace-step-1.5-prompt-writer` —— 分离模式的 BGM 步调用
 
-（视频步调用的是根目录的 `h3-prompt-writing`，它同时是主线的一部分，所以没跟着归档。）
+（视频步用 `h3-video-prompt-cn`，它属主线，所以没跟着归档。）
 
 ---
 
@@ -31,7 +31,7 @@
 
 ## 如果还要用
 
-**10 个必须一起装**，因为它们互相调用：8 个生成类在①生图步调 `image-prompt-writer-local`、②视频步调 `h3-prompt-writing`、③BGM 步调 `ace-step-1.5-prompt-writer`。缺任何一个都会在对应步骤断链。
+**10 个必须一起装**，因为它们互相调用：8 个生成类在①生图步调 `image-prompt-writer-local`、②视频步调 `h3-video-prompt-cn`、③BGM 步调 `ace-step-1.5-prompt-writer`。缺任何一个都会在对应步骤断链。
 
 安装方式：把这些文件夹**直接复制到** WorkBuddy 用户级 skills 目录（`~/.workbuddy/skills/`），**不要连 `old/` 这一层目录一起复制**——skill 必须平铺在 skills 目录下。
 
