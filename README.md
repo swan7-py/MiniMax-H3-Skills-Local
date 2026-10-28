@@ -10,14 +10,12 @@
 
 本仓库现在分两块：**主线 = H3 提示词**，**其余是 2026-09 的本地版流水线（已归档到 `old/`）**。
 
-**推荐只装 2 个，最多 4 个**：
+**推荐只装 2 个**：
 
 | 装什么 | 为什么 |
 |---|---|
-| `h3-video-prompt-cn` | **必装**。H3 六段结构 + 实跑判据（动作迁移、替换／编辑、音频参考、否定式闸门、交付模板） |
+| `h3-video-prompt-cn` | **必装**。H3 六段结构 ＋ 全部实跑判据（动作迁移、替换／编辑、音频参考、否定式闸门、运镜指引、交付模板）；**官方使用说明也已归档在它的 `references/` 里**，不必另装官方 skill |
 | `h3-camera-motion-lib` | **强烈建议**。镜头句本体——按运镜族给可直接粘贴的中文句子 + 实测状态 + 推荐 LoRA |
-| `h3-prompt-writing-cn` | 可选。**全量中文版**（自带 16 份 references），只想装一个时选它 |
-| `h3-prompt-writing` | 可选。英文骨架 + `agents/openai.yaml`，现同样自带 16 份 references |
 
 `old/` 里的 10 个是早期流水线，**2026-09-03 之后没再维护**，且互相强依赖（要装就得 10 个一起装），详见 [`old/README.md`](old/README.md)。
 
@@ -25,30 +23,27 @@
 
 ## 包含清单
 
-### 一、主线：H3 提示词（4 个）
+### 一、主线：H3 提示词（2 个）
 
-| Skill 文件夹 | 版本性质 | 用途 |
+| Skill 文件夹 | 定位 | 用途 |
 |---|---|---|
-| `h3-video-prompt-cn` | **实践新版**（完整版 / 超集，**主力**） | 官方 H3 规范 ＋ 实跑出来的判据：镜头层纪律、参考图两种角色、否定式两级闸门、动作迁移、替换／编辑、音频参考、对白写法、交付模板 |
-| `h3-camera-motion-lib` | **实践产出**（全新） | ⭐ **H3 运镜提示词库**——按运镜族（摇镜变焦 / 推拉横移升降 / 环绕翻滚子弹时间 / 特殊复合 / 视角机位 / 装置风格 / 双人关系）给**可直接粘贴的中文镜头句** ＋ 实测状态（✅🟡❌）＋ 推荐 LoRA ＋ 坑 |
-| `h3-prompt-writing-cn` | **全量版 · 中文**（2026-10-26 起） | 官方六段结构 + 专家包全部实战判据，**自带 16 份 references**；改动先改它，再同步回 `h3-video-prompt-cn` |
-| `h3-prompt-writing` | **官方原版 · 英文骨架** | 同上，带 `agents/openai.yaml`（可选 UI 元数据），供英文产出或兼容 UI 使用 |
+| `h3-video-prompt-cn` | **唯一超集 · 主力** | 官方 H3 规范 ＋ 实跑判据：视频参考三玩法、镜头句精简纪律、否定式两级闸门、替换／编辑四条判据、动作迁移、音频参考、隔空操控、手势粒度、跨镜点名、大型附属物、特效结构层、交付模板；`references/` **18 份** |
+| `h3-camera-motion-lib` | 镜头句库 | ⭐ **H3 运镜提示词库**——按运镜族（摇镜变焦 / 推拉横移升降 / 环绕翻滚子弹时间 / 特殊复合 / 视角机位 / 装置风格 / 双人关系）给**可直接粘贴的中文镜头句** ＋ 实测状态（✅🟡❌）＋ 推荐 LoRA ＋ 坑 |
 
-> **日常只需要前两个**：`h3-video-prompt-cn` 管结构与判据，`h3-camera-motion-lib` 管镜头句本体。
-> 两个官方原版只在「要和官方口径对照」时才装。
+> **日常两个都装**：`h3-video-prompt-cn` 管结构与判据，`h3-camera-motion-lib` 管镜头句本体。
 
-#### 「官方原版」与「实践新版」的区别
+#### 官方口径放哪了（2026-10-28 起）
 
-| | `h3-prompt-writing` / `h3-prompt-writing-cn`（**官方原版**） | `h3-video-prompt-cn`（**实践新版**） |
-|---|---|---|
-| 来源 | MiniMax 官方 H3 提示词指南（六段结构、标签与占位符、参考资产规则），本分享包只做"本地版 · 纯提示词 · 逐步确认"的改造封装 | 官方原版 **＋ 我们实跑之后补进去的判据** |
-| 体量 | SKILL.md **226 行**（英）/ **355 行**（中），references 各 **16 份** | SKILL.md **383 行**，references **16 份** |
-| 多了什么 | — | 镜头层纪律、参考图两种角色、否定式两级闸门、对白 `<d>` 写法、隔空操控动词纪律、跨镜点名、大型附属物尺度、道具交接、多目标打击、交付模板等**踩坑条目** |
-| 适用 | 8 个本地版生成 skill 的调用依赖，**必须装** | 你直接写 H3 提示词时用它更细；**可选**，不装也不影响流水线 |
+官方 `h3-prompt-writing`（英文）/ `h3-prompt-writing-cn`（中文）**已不再作为独立 skill**，正文归档进 `h3-video-prompt-cn/references/`：
 
-> **一句话**：官方原版告诉你"H3 提示词长什么样"，实践新版告诉你"哪些写法在实跑里会翻车"。
-> **两份现已合并为同一套 references（16 份，逐字节一致），并且 `h3-prompt-writing-cn` 于 2026-10-26 升级为「全量中文版」**——
-> 它已整合专家包版全部内容，**改动先改 `h3-prompt-writing-cn`，再同步回 `h3-video-prompt-cn`**（权威方向与 2026-10-25 之前相反）。
+| 文件 | 内容 |
+|---|---|
+| `official-guide-cn.md` / `official-guide-en.md` | 官方 8 章使用说明（工作流 / 基础模式 / 全参考 / 音频时间线 / 输出规则 / 特殊标记 / 技巧 / 参考索引），中英各一份 |
+| `base-en.txt` / `ref-en.txt` | 官方**规范原文**（基础模式 / 全参考模式）——权威契约，不翻译 |
+| `base.txt` / `ref.txt` | 上面两份的可读中文渲染版 |
+
+> **一句话**：官方版告诉你"H3 提示词长什么样"，`h3-video-prompt-cn/SKILL.md` 告诉你"哪些写法在实跑里会翻车"。
+> 权威方向：**任何新判据只进 `h3-video-prompt-cn/SKILL.md`**；官方口径有变动时只更新 `references/official-guide-*.md`。
 
 #### 两个进阶 skill 的分工
 
@@ -73,7 +68,8 @@
 | `ace-step-1.5-prompt-writer` | ACE-Step 1.5 音乐提示词（分离模式 BGM 依赖） |
 
 > 这 10 个 **2026-09-03 之后未再维护**，已整体移入 `old/`。
-> 它们互相强依赖：8 个生成类在生图步调用 `image-prompt-writer-local`、视频步调用 `h3-prompt-writing`、BGM 步调用 `ace-step-1.5-prompt-writer`——**要装必须 10 个一起装**，单独装会断链。详见 [`old/README.md`](old/README.md)。
+> 它们互相强依赖：8 个生成类在生图步调用 `image-prompt-writer-local`、视频步调用 `h3-prompt-writing`、BGM 步调用 `ace-step-1.5-prompt-writer`——**要装必须 10 个一起装**，单装会断链。详见 [`old/README.md`](old/README.md)。
+> 注：其中 `h3-prompt-writing` 已移出主目录，正文归档在 `h3-video-prompt-cn/references/official-guide-*.md`——这条流水线本身已归档，引用仅作历史说明。
 
 ---
 
@@ -92,10 +88,9 @@
 └── h3-camera-motion-lib/   ← 强烈建议（镜头句本体）
 ```
 
-需要官方口径对照时，再补 `h3-prompt-writing-cn/`、`h3-prompt-writing/`（两者与 `h3-video-prompt-cn` 同源，可共存）。
+官方口径不用另装：`h3-video-prompt-cn/references/` 里已有 `official-guide-cn.md` / `official-guide-en.md`（官方 8 章正文），以及 `base-en.txt` / `ref-en.txt`（官方规范原文）。
 
-> `h3-video-prompt-cn` 带 `references/` 子目录（**16 个文件**），复制时**保留整目录**。
-> `h3-prompt-writing` / `h3-prompt-writing-cn` 现在也各带一套 **完全相同的 16 份 references**（含中文 `base.txt` / `ref.txt` 与官方英文 `base-en.txt` / `ref-en.txt`），装哪个都能独立使用。
+> `h3-video-prompt-cn` 带 `references/` 子目录（**18 个文件**），复制时**保留整目录**。
 
 ### 若要装已归档的本地版流水线
 
@@ -112,7 +107,7 @@
 
 1. **生图只给提示词，不调用任何生图工具**：每步只输出文生图提示词，你用任意工具（Krea2 / ComfyUI 等）生成图像并把**图像地址返回**即可。不硬编码任何工作流路径。
 2. **每一步都确认 + 交付物门**：每个步骤产出后暂停，等你「确认 / 修改」；生图步必须等你**返回图像地址**后才进入视频步（视频步以你的静帧为参考图，I2V from still）。
-3. **视频提示词调用 `h3-prompt-writing`**：按 H3 的 I2VA/Ref2VA 结构输出完整视频提示词 + 端口 / 顺序 / 时长 / 分辨率建议，你在本地 H3 节点执行。
+3. **视频提示词调用 `h3-prompt-writing`（现已归档在 `h3-video-prompt-cn/references/`）**：按 H3 的 I2VA/Ref2VA 结构输出完整视频提示词 + 端口 / 顺序 / 时长 / 分辨率建议，你在本地 H3 节点执行。
 4. **音频方案门（见下）**：第一步先问你音频走「统一 H3」还是「分离生成」。
 5. **旁白/对白一致性（分离模式必做）**：需把【音色参考文件】放到**当前项目文件夹**，用任意 TTS 的「参考 / 音色克隆」模式保证跨镜头音色统一；未提供则暂停，禁止无参考直接生成。
 6. **BGM 分离 → 视频提示词只规划视觉**：选分离模式时，BGM 由 ACE-Step 1.5 单独生成，视频提示词**不写 BGM/旁白/对白出现指令**，音频留到后期合成。
@@ -169,6 +164,19 @@
 ---
 
 ## 更新记录（Changelog）
+
+### 2026-10-28 · 收敛为 2 个 skill：官方两版归档进 `h3-video-prompt-cn/references/`
+
+**结构**：`h3-prompt-writing`（英）/ `h3-prompt-writing-cn`（中）**不再作为独立 skill**，正文归档为 `h3-video-prompt-cn/references/official-guide-en.md` / `official-guide-cn.md`（各 8 章：工作流 / 基础模式 / 全参考 / 音频时间线 / 输出规则 / 特殊标记 / 技巧 / 参考索引）。根目录只剩 **2 个** skill：`h3-video-prompt-cn`（唯一超集）＋ `h3-camera-motion-lib`（镜头句库）。
+
+| 文件 | 变更 |
+|---|---|
+| `h3-video-prompt-cn/SKILL.md` | ① 吸收官方版更详的章节：「分镜 / 批次 / 参考图 约定」改为详版（硬规则 6 条 + 调用方说明）、「音频时间线对齐」补 Whisper 话轮边界与切点纪律、「特殊标记」补 ID 表与三条规则、「输出规则」补「改写段落用中文书写」条；② 补入「镜头句精简纪律 —— 没装运镜库时的兜底」与「替换 / 编辑类四条判据（2026-10-25 定稿）」两章；③ 末尾加「官方口径参考」节指向归档文件 → **413 → 434 行** |
+| `h3-video-prompt-cn/references/` | 新增 `official-guide-cn.md`（95 行）/ `official-guide-en.md`（89 行）→ **16 → 18 份** |
+| `h3-prompt-writing/`、`h3-prompt-writing-cn/` | **整目录移出仓库**（正文已归档；两处 16 份 references 与 `h3-video-prompt-cn/references/` 逐字节相同，删除不丢内容） |
+| 官方两版正文 | 归档前已清回官方 8 章：CN 删「三条硬规则 / 构图可执行性 / 分镜批次 / 批次自含 / 道具交接 / 否定式」；EN 删「分镜批次 / 批次自含 / 道具交接 / 否定式 / 构图可执行性」 |
+
+> **定位判据**：`h3-video-prompt-cn/SKILL.md` **434 行**（唯一超集）｜官方口径只在 `references/official-guide-*.md`（95 / 89 行）。**任何新判据只进 `h3-video-prompt-cn/SKILL.md`**；官方口径有变动时只更新 `official-guide-*.md`。
 
 ### 2026-10-26 · 三份 skill 的 references 统一；`<Picture N>` 旧硬规则撤销；新增「构图可执行性」7 条
 
@@ -265,6 +273,6 @@
 
 ## 兼容性 / 免责
 
-- 全部 skill **纯文本产出、零 API 调用**，可移植到任何能读取本地 `.workbuddy/skills/` 的 WorkBuddy 环境（含 OpenAI ChatGPT/Codex 等兼容 UI，`h3-prompt-writing` 的 `agents/openai.yaml` 仅提供可选 UI 元数据，不限制运行环境）。
+- 全部 skill **纯文本产出、零 API 调用**，可移植到任何能读取本地 `.workbuddy/skills/` 的 WorkBuddy 环境（含 OpenAI ChatGPT/Codex 等兼容 UI）。
 - 本包**不包含**任何生图/生视频/生音乐的权重、工作流 JSON 或执行脚本；生成执行完全在你本地环境完成。
 - 原始能力归属见上文[「鸣谢 / 来源」](#鸣谢--来源credits)；Krea2 工作流、`h3-prompt-writing` 等归各自原作者 / 官方项目，本分享包仅做"本地版 · 纯提示词 · 逐步确认"的改造封装。

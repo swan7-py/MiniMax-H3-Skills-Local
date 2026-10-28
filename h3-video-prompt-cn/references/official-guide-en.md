@@ -1,0 +1,89 @@
+> This file archives the body of the official skill `h3-prompt-writing`, shipped alongside `h3-video-prompt-cn`.
+> The official **spec text** is `base-en.txt` (base modes) / `ref-en.txt` (full-reference mode) in this folder; this file is only the usage guide.
+> **Write real prompts from `../SKILL.md`**; use this file to check official wording or when you need the plain structure.
+
+---
+
+# H3 Prompt Writing
+
+> **Scope: the official baseline.** This file carries the official H3 prompt spec only — no field-tested additions.
+> The full playbook (official spec **+** every field-tested rule: batch self-containment, negation gate, shot-level discipline, replacement / editing, motion transfer, audio reference) is `h3-video-prompt-cn`. Write real prompts from that one; use this file for the reference structure.
+
+## Workflow
+
+1. Identify the input mode: T2VA, I2VA, FL2VA, L2VA, or full-reference Ref2VA.
+2. For base text/keyframe modes, read `references/base-en.txt` and follow its final prompt structure.
+3. For full-reference mode, read `references/ref-en.txt` and follow its six-section rewrite format.
+4. Preserve the exact field names, section order, labels, and timing notation from the selected guide.
+
+## Base Modes
+
+- T2VA: build the full audiovisual timeline from text.
+- I2VA: start from the first frame and develop forward from it.
+- FL2VA: describe the continuous path between the first and last frames.
+- L2VA: infer a plausible opening and converge to the supplied last frame.
+
+Use `integrated_multimodal_description`, `overall_soundscape`, and `non_diegetic_music` in the order shown in `references/base-en.txt`.
+
+## Full-Reference Mode
+
+Ref2VA rewrites use `subject_definitions`, `summary`, `retention_analysis`, `detailed_description`, `overall_soundscape`, and `non_diegetic_music` in that order. Reference labels stay consistent across all sections.
+
+Read `references/ref-en.txt` for label rules, retention analysis, and complete examples.
+
+## Audio Timeline Alignment (Ref2VA with dialogue audio)
+
+When the input includes dialogue/voice audio (`<Audio N>`), **transcribe the audio first, then set shot timestamps** — this is the most common failure point in Ref2VA-with-audio: speaker mismatch (character A is on screen speaking while the audio has already switched to character B).
+
+- **Audio-first:** Run Whisper (`faster-whisper`, model `small`) to get per-utterance start/end timestamps and speaker IDs (S1/S2 when distinguishable). Merge consecutive utterances by the same speaker into "turns"; the gaps between turns are the natural cut points. Anchor each `[Shot N] At MM:SS.mmm` to these turn boundaries — do not guess blindly. Note: Whisper may mishear numbers/names (e.g. "心之星" → "星之星"); timestamps are reliable, use the user's original text for content.
+- **Rough alignment, not tight:** Shot cut points should roughly match speaker-switch boundaries in the audio (±0.5–1s is fine), but do NOT bind frame-precisely. Cutting on every intra-sentence pause, or removing all timestamps and letting the model free-run, both make rhythm worse.
+- **Hard rule — no speaker mismatch:** Never let a shot where character A is on screen speaking overlap an audio segment where character B is actually talking. Verify each `[Shot N]` time range matches the speaker (S1/S2) that is actually vocalizing in that range.
+
+## Output Rules
+
+- **Dialogue/lyrics MUST use the `<d>[Language] ... </d>` tag (iron rule).** Place the speaker's identifying phrase, ID, action, and delivery OUTSIDE `<d>`; inside `<d>` include only the language tag and the verbatim original spoken content — preserve every original word and punctuation mark, do NOT translate, rewrite, or append an English translation. Examples: `<d>[Chinese] 今天的星星，好像比昨天暗了一点点。</d>`, `<d>[English] I get off at the next station.</d>`. This is mandatory for both the script block and every shot description.
+- **Audio-reuse mode (fully_copy): never re-synthesize.** When `<Audio N>` is reused as the final track, the audio is the sole voice source — describe only WHO speaks, WHEN, and that lip-sync follows the audio. Do NOT add tone / prosody / pause / emotion instructions (e.g. "voice trails off", "scholarly tone"), which trigger re-synthesis and cause garbled speech.
+- Write rewrite sections in English; preserve dialogue, lyrics, and visible scene text in their original language.
+- Describe each shot by composition, subjects, environment, actions, camera, sound, and the exact point where referenced content appears.
+- Avoid plot summaries, unresolved reference labels, and timing that does not match the requested duration.
+
+## Special Tokens (MiniMax Extra Tokens)
+
+The released MiniMax-H3 tokenizer (Qwen-based) reserves these fixed special tokens. Their IDs are frozen by the shipped tokenizer — never renumber, paraphrase, or spell them differently. Use them verbatim when wrapping dialogue, lyrics, captions, or marking a cutoff.
+
+| Token | ID | Purpose |
+|-------|-----|---------|
+| `<d>` / `</d>` | 151669 / 151670 | Dialogue delimiters. Wrap spoken lines as `<d>[Language] ... </d>` (iron rule — see Output Rules). |
+| `<|lyrics_start|>` / `<|lyrics_end|>` | 151672 / 151673 | Lyrics delimiters. Wrap sung lyrics (sung vocal segments) the same way as dialogue. |
+| `<|caption_start|>` / `<|caption_end|>` | 151674 / 151675 | Caption delimiters. Wrap on-screen caption / typography / subtitle overlay text. |
+| `<|cutoff|>` | 151671 | Cutoff marker. Marks a hard segment boundary / end-of-segment in the generated sequence. |
+
+Rules:
+- Inside dialogue/lyrics/caption markers, put only the verbatim original content (with the `[Language]` tag for `<d>` and lyrics). Do not translate, rewrite, or append a translation.
+- Speaker identity, action, and delivery go OUTSIDE the markers.
+- These markers are consumed by the tokenizer as literal tokens; a wrong spelling (e.g. `<lyrics_start>` without the `|`) breaks parsing.
+
+## Tips for Better Results
+- Always match the total duration of the description to the requested video length (4–15 seconds).
+- Keep reference labels consistent (e.g. `<Picture 1>`, `<Video 1>`, `<Audio 1>`) across every section.
+- Prefer concrete visual and audio details over abstract words like "cinematic" or "beautiful".
+- When using keyframes (I2VA / FL2VA / L2VA), clearly state how the first and/or last frame connects to the timeline.
+
+## Extended references (Chinese)
+
+The full playbook lives alongside this file in `references/`. Highlights:
+
+| File | Covers |
+|---|---|
+| `camera-and-lora.md` | camera DSL, LoRA selection per motion type |
+| `reference-image-roles.md` | when an image is a `<Picture N>` vs inlined into `<Subject N>` |
+| `video-reference-modes.md` | motion transfer, video continuation, character swap |
+| `editing-and-replacement.md` | replacement / removal editing discipline |
+| `audio-reference.md` | `<Audio N>` relationships, voice cloning vs reference |
+| `negation-guard.md` | naked negation vs replacement negation, whitelist |
+| `multi-target-and-hit.md` | multi-target framing and readability |
+| `card-derived-animation.md` | turning a still skill card into a motion beat |
+| `motion-transfer.md` | transferring motion from a source video |
+| `writing-order.md` | occlusion and reveal ordering |
+| `creative-dna-library.md` | reusable creative mechanisms |
+| `base-en.txt` / `ref-en.txt` | the official T2VA/I2VA/FL2VA/L2VA and Ref2VA specs |
