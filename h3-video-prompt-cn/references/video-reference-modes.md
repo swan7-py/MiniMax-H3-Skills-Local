@@ -77,7 +77,7 @@ subject_definitions:
 <Video 1> 是本片全部运动与机位的唯一来源：她在其中的位置、朝向、身体轮廓、位移轨迹与速度、姿态、占位体积，与 <Subject 3> 之间的踩踏位置和接触关系，以及逐镜机位、硬切点与推进节奏，全部沿用 <Video 1> 对应时刻的可见内容。
 
 retention_analysis:
-<Video 1> (运动与机位来源): attribute_transfer - 位置、朝向、身体轮廓、位移轨迹与速度、姿态、占位体积、接触关系、逐镜机位、硬切点与推进节奏整体迁移到成片。
+<Video 1> (动作、机位与剪辑节奏): attribute_transfer - 位置、朝向、身体轮廓、位移轨迹与速度、姿态、占位体积、接触关系、逐镜机位、硬切点与推进节奏整体迁移到成片。
 <Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): partially_preserved - 脸型、发型与服装完整保留；位置、朝向、身体轮廓、位移轨迹与速度、姿态与占位体积沿用 <Video 1>。
 
 detailed_description:
@@ -120,3 +120,45 @@ detailed_description:
 4. 在 `subject_definitions` 里加一句规范句堵住源片外观回流，例如 `她的头发造型来自 <Picture 1>`（`<Picture N>` 出现在 `subject_definitions` 是合规的）。
 
 **写完后自检**：发型句是否几何可执行 ／ 是否每镜点名 ／ 是否残留源片外观词 ／ `<Picture` 编号是否全局一致。
+
+---
+
+## 七、`retention_analysis` 里那对括号怎么写
+
+`<Video N> (…): <marker> - …` 这个括号**是官方契约里的合法槽位**（`ref-en.txt` 有原例 `<Video 1> (cut and pacing structure): weak_reference - …`），不是自造的标签。但它有三条硬规矩，踩了就是"看起来像标签"。
+
+### 7.1 括号只属 `retention_analysis`
+
+| 段落 | 正确写法 | 错误写法 |
+|---|---|---|
+| `subject_definitions` | `<Video 1> is the source video for the target video edit.`（完整句子，**无括号**） | `<Video 1> (编辑源): …` |
+| `retention_analysis` | `<Video 1> (动作、机位与剪辑节奏): partially_preserved - …` | — |
+
+### 7.2 `subject_definitions` 无括号，`<Audio N>` 也无括号
+
+`subject_definitions` 里 `<Video N>` 必须是完整句子；官方 `<Audio 1>: fully_copy - …` 同样**不带括号**。括号只给 `<Subject N>` / `<Picture N>` / `<Video N>` 三类。
+
+### 7.3 括号里放「范围」，不放「角色」
+
+三类括号语义不同，**不可互换**：
+
+| 标签 | 括号里放什么 | 官方例 |
+|---|---|---|
+| `<Subject N>` | 镜号索引 | `(appears in [Shot 1], [Shot 3])` |
+| `<Picture N>` | 帧角色（定位） | `([Shot 1] first frame)` |
+| `<Video N>` | **被引用的范围** | `(cut and pacing structure)` |
+
+`<Video N>` 的括号**只写"源片的哪一部分被用"**，不写"它是什么角色"——角色已在 `subject_definitions` 说过一遍，重复即冗余：
+
+- ✗ `(编辑源：动作、机位、节奏)` —— 角色 + 全角冒号，读起来像**嵌套的第二条标签**
+- ✗ `(运动与机位来源)` —— "来源"是角色重述
+- ✓ `(动作、机位与剪辑节奏)` —— 源片**有剪辑**
+- ✓ `(动作、机位与运镜节奏)` —— 源片是**一镜到底**，别写"剪辑"（会诱导模型自己插切点）
+
+> ⚠️ 括号内**不用全角冒号** `：`。`X：Y` 的结构是最容易被读成标签的形态。
+
+### 7.4 做 A/B 对照时，括号必须四套完全一致
+
+2×2 对照（`reference`/`editing` × `秒`/`帧`）的设计前提是"只差这两个变量"。**`retention marker` 不同是必须的**（`attribute_transfer` ↔ `partially_preserved`，语义要求），**但括号措辞不同是自找的第三个变量**——跑完就没法归因了。
+
+> 实测踩过：同一批四套里 reference 写 `(运动与机位来源)`、editing 写 `(编辑源：动作、机位、节奏)`，语义等价但措辞不同，归因时多一层噪声。现已统一。
