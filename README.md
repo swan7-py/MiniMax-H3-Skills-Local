@@ -165,6 +165,19 @@
 
 ## 更新记录（Changelog）
 
+### 2026-11-14 · `<Subject N>` 回指升为铁律 ＋ 技能展示四拍写法
+
+来源：雨终季 MV 07f / 07g / 最后一剑 实跑，两条都由用户纠正后落盘。权威正文仍只写进 `h3-video-prompt-cn/SKILL.md`，其余 H3 提示词 skill 放浓缩版与指针。
+
+| 文件 | 变更 |
+|---|---|
+| `h3-video-prompt-cn/SKILL.md` | ① 新增「已定义对象一律用 `<Subject N>` 回指」：`detailed_description` 里凡 `subject_definitions` 定义过的角色 / 人物 / 道具 / 光效 / 场景一律写回编号，附「人形 → `<Subject 1>`」**错误 / 正确示例**、三条写法与交付前机械自检；§三条硬规则 ③ 里原「优先用 `<Subject N>` 是可读性偏好」同步改为「`detailed_description` 内升格为铁律」。② 新增「技能展示（放大招）的四拍写法」：起手 → 成形 → 放大 → 出招与后果；尺寸用画面里已有的东西当尺子、放大之后紧跟镜头拉远、慢动作写「慢下来但仍在推进」、命中三层反馈、手部朝向按真实形态写 |
+| `h3-video-prompt-cn/references/writing-order.md` | 新增 §四「句子顺序 = 模型演绎的顺序」：一句一动作 + 锚点下标单调递增断言、一镜一拍、禁令词会落成停格 |
+| `h3-camera-motion-lib/SKILL.md` | 交付前自检补 `<Subject N>` 回指一条；撤销过期的「`<Picture` 计数 = 0」，改为「编号四段一致」；新增「写技能展示 / 巨物放大时，与另两条规则一起用」；清掉已归档 skill 的旧引用 |
+| 本机另两个 H3 提示词 skill（**不在本仓库**） | `h3-fight-choreography/SKILL.md` 补四拍浓缩节 + 回指铁律；`h3-song-mv-batch-本地版/SKILL.md` 合规自检补两条 |
+
+> 口径不变：**任何新判据只进 `h3-video-prompt-cn/SKILL.md`**；官方口径有变动时只更新 `references/official-guide-*.md`。
+
 ### 2026-10-28 · 收敛为 2 个 skill：官方两版归档进 `h3-video-prompt-cn/references/`
 
 **结构**：`h3-prompt-writing`（英）/ `h3-prompt-writing-cn`（中）**不再作为独立 skill**，正文归档为 `h3-video-prompt-cn/references/official-guide-en.md` / `official-guide-cn.md`（各 8 章：工作流 / 基础模式 / 全参考 / 音频时间线 / 输出规则 / 特殊标记 / 技巧 / 参考索引）。根目录只剩 **2 个** skill：`h3-video-prompt-cn`（唯一超集）＋ `h3-camera-motion-lib`（镜头句库）。
